@@ -1,0 +1,203 @@
+country_code;economy;region;income_group;facility_group;score;procedures_man;time_men;cost_men;procedures_woman;time_woman;cost_woman;paid_in_min
+AFG;Afghanistan;South Asia;Low income;High facility;92,0413;4,0;8,0;6,4;5,0;9,0;6,4;0,0
+ALB;Albania;Europe & Central Asia;Upper middle income;High facility;91,70203000000001;5,0;4,5;11,3;5,0;4,5;11,3;0,0
+DZA;Algeria;Middle East & North Africa;Upper middle income;Low facility;77,94755;12,0;18,0;11,8;12,0;18,0;11,8;0,0
+AGO;Angola;Sub-Saharan Africa;Lower middle income;Low facility;79,04553;8,0;36,0;13,9;8,0;36,0;13,9;0,0
+ATG;Antigua and Barbuda;Latin America & Caribbean;High income;Lower middle facility;81,7462;9,0;22,0;8,7;9,0;22,0;8,7;0,0
+ARG;Argentina;Latin America & Caribbean;Upper middle income;Lower middle facility;81,99463;11,0;11,0;5,3;11,0;11,0;5,3;0,0
+ARM;Armenia;Europe & Central Asia;Upper middle income;High facility;96,08176;3,0;4,0;0,8;3,0;4,0;0,8;0,0
+AUS;Australia;High income: OECD;High income;High facility;96,47005000000001;3,0;2,5;0,7;3,0;2,5;0,7;0,0
+AUT;Austria;High income: OECD;High income;Lower middle facility;83,20737000000001;8,0;21,0;4,8;8,0;21,0;4,8;11,9
+AZE;Azerbaijan;Europe & Central Asia;Upper middle income;High facility;96,13986000000001;3,0;3,5;1,3;3,0;3,5;1,3;0,0
+BHS;Bahamas, The;Latin America & Caribbean;High income;Lower middle facility;84,47192000000001;7,0;21,5;11,4;7,0;21,5;11,4;0,0
+BHR;Bahrain;Middle East & North Africa;High income;Upper middle facility;89,57182;6,0;8,0;1,1;7,0;9,0;1,1;3,1
+BANG;Bangladesh;South Asia;Lower middle income;Lower middle facility;80,81592;9,0;19,5;21,2;9,0;19,5;21,2;0,0
+BGD;Bangladesh Dhaka;South Asia;Lower middle income;Lower middle facility;80,81592;9,0;19,5;21,2;9,0;19,5;21,2;0,0
+BRB;Barbados;Latin America & Caribbean;High income;Upper middle facility;86,37139;7,0;16,0;7,3;7,0;16,0;7,3;0,0
+BLR;Belarus;Europe & Central Asia;Upper middle income;High facility;93,38854;4,0;9,0;0,5;4,0;9,0;0,5;0,0
+BEL;Belgium;High income: OECD;High income;Upper middle facility;91,43473;5,0;4,5;5,4;5,0;4,5;5,4;16,0
+BLZ;Belize;Latin America & Caribbean;Upper middle income;Low facility;71,96649000000001;9,0;48,0;34,7;9,0;48,0;34,7;0,0
+BEN;Benin;Sub-Saharan Africa;Low income;Upper middle facility;90,59883;5,0;8,0;3,5;6,0;9,0;3,6;5,2
+BTN;Bhutan;South Asia;Lower middle income;Upper middle facility;86,38179000000001;8,0;12,0;3,5;8,0;12,0;3,5;0,0
+BOL;Bolivia;Latin America & Caribbean;Lower middle income;Low facility;69,12483;12,0;39,5;39,2;12,0;39,5;39,2;0,0
+BIH;Bosnia and Herzegovina;Europe & Central Asia;Upper middle income;Low facility;59,823370000000004;13,0;80,0;14,9;13,0;80,0;14,9;11,1
+BWA;Botswana;Sub-Saharan Africa;Upper middle income;Low facility;76,22266;9,0;48,0;0,6;9,0;48,0;0,6;0,0
+BRAZ;Brazil;Latin America & Caribbean;Upper middle income;Lower middle facility;80,33913000000001;10,61;20,145;4,7;10,61;20,145;4,7;0,0
+BRA;Brazil São Paulo;Latin America & Caribbean;Upper middle income;Lower middle facility;80,40346000000001;11,0;18,0;3,9;11,0;18,0;3,9;0,0
+BRN;Brunei Darussalam;East Asia & Pacific;High income;High facility;94,92120000000001;3,0;5,0;1,2;4,0;6,0;1,2;0,0
+BGR;Bulgaria;Europe & Central Asia;Upper middle income;Lower middle facility;85,38458000000001;7,0;23,0;1,1;7,0;23,0;1,1;0,0
+BFA;Burkina Faso;Sub-Saharan Africa;Low income;Upper middle facility;88,08940000000001;3,0;13,0;43,3;3,0;13,0;43,3;6,6
+BDI;Burundi;Sub-Saharan Africa;Low income;High facility;93,1144;4,0;5,0;10,7;4,0;5,0;10,7;0,0
+CPV;Cabo Verde;Sub-Saharan Africa;Lower middle income;Lower middle facility;82,03550000000001;9,0;18,0;14,4;9,0;18,0;14,4;0,0
+KHM;Cambodia;East Asia & Pacific;Lower middle income;Low facility;52,798930000000006;9,0;99,0;47,4;9,0;99,0;47,4;76,2
+CMR;Cameroon;Sub-Saharan Africa;Lower middle income;Upper middle facility;86,26437000000001;5,0;13,0;24,6;6,0;14,0;25,0;12,1
+CAN;Canada;High income: OECD;High income;High facility;98,23479;2,0;1,5;0,3;2,0;1,5;0,3;0,0
+CAF;Central African Republic;Sub-Saharan Africa;Low income;Low facility;60,89739;10,0;22,0;143,4;10,0;22,0;143,4;40,7
+TCD;Chad;Sub-Saharan Africa;Low income;Low facility;52,0906;8,0;58,0;172,3;8,0;58,0;172,3;26,0
+CHL;Chile;High income: OECD;High income;Upper middle facility;89,07767000000001;7,0;6,0;5,7;7,0;6,0;5,7;0,0
+CHIN;China;East Asia & Pacific;Upper middle income;High facility;93,41922000000001;4,0;8,55;1,2;4,0;8,55;1,2;0,0
+CHN;China Shanghai;East Asia & Pacific;Upper middle income;High facility;93,26883000000001;4,0;9,0;1,5;4,0;9,0;1,5;0,0
+COL;Colombia;Latin America & Caribbean;Upper middle income;Lower middle facility;85,31232000000001;8,0;11,0;14,0;8,0;11,0;14,0;0,0
+COM;Comoros;Sub-Saharan Africa;Lower middle income;Low facility;72,24836;9,0;16,0;82,5;9,0;16,0;82,5;28,5
+ZAR;Congo, Dem. Rep.;Sub-Saharan Africa;Low income;Upper middle facility;90,24427000000001;4,0;7,0;26,7;4,0;7,0;26,7;6,0
+COG;Congo, Rep.;Sub-Saharan Africa;Lower middle income;Low facility;64,09823;10,0;49,0;75,5;11,0;50,0;75,5;2,9
+CRI;Costa Rica;Latin America & Caribbean;Upper middle income;Lower middle facility;79,92302000000001;10,0;23,0;9,5;10,0;23,0;9,5;0,0
+CIV;Côte d'Ivoire;Sub-Saharan Africa;Lower middle income;High facility;93,70420000000001;4,0;6,0;2,7;4,0;6,0;2,7;2,7
+HRV;Croatia;Europe & Central Asia;High income;Lower middle facility;82,62129;8,0;22,5;6,6;8,0;22,5;6,6;11,6
+CYP;Cyprus;Europe & Central Asia;High income;Upper middle facility;91,2436;5,0;6,0;11,9;5,0;6,0;11,9;0,0
+CZE;Czech Republic;High income: OECD;High income;Lower middle facility;82,0852;9,0;24,5;1,0;9,0;24,5;1,0;0,0
+DNK;Denmark;High income: OECD;High income;High facility;92,51774;5,0;3,5;0,2;5,0;3,5;0,2;13,2
+DJI;Djibouti;Middle East & North Africa;Lower middle income;Lower middle facility;84,01304;6,0;14,0;41,9;6,0;14,0;41,9;0,0
+DMA;Dominica;Latin America & Caribbean;Upper middle income;Upper middle facility;89,38764;5,0;12,0;14,7;5,0;12,0;14,7;0,0
+DOM;Dominican Republic;Latin America & Caribbean;Upper middle income;Lower middle facility;83,43518;7,0;16,5;14,1;7,0;16,5;14,1;31,3
+ECU;Ecuador;Latin America & Caribbean;Upper middle income;Low facility;69,07230000000001;11,0;48,5;33,3;11,0;48,5;33,3;0,0
+EGY;Egypt, Arab Rep.;Middle East & North Africa;Lower middle income;Lower middle facility;83,82581;6,0;11,0;42,6;7,0;12,0;42,6;0,0
+SLV;El Salvador;Latin America & Caribbean;Lower middle income;Low facility;78,4067;9,0;16,5;45,1;9,0;16,5;45,1;2,7
+GNQ;Equatorial Guinea;Sub-Saharan Africa;Upper middle income;Low facility;55,735980000000005;16,0;33,0;101,2;16,0;33,0;101,2;22,3
+ERI;Eritrea;Sub-Saharan Africa;Low income;Low facility;51,909060000000004;13,0;84,0;23,7;13,0;84,0;23,7;104,0
+EST;Estonia;High income: OECD;High income;High facility;95,25464000000001;3,0;3,5;1,1;3,0;3,5;1,1;14,6
+SWZ;Eswatini;Sub-Saharan Africa;Lower middle income;Low facility;74,11554000000001;12,0;30,0;18,3;12,0;30,0;18,3;0,2
+ETH;Ethiopia;Sub-Saharan Africa;Low income;Low facility;70,78800000000001;11,0;32,0;52,7;11,0;32,0;52,7;0,0
+FJI;Fiji;East Asia & Pacific;Upper middle income;Low facility;73,38548;11,0;40,0;15,9;11,0;40,0;15,9;0,0
+FIN;Finland;High income: OECD;High income;High facility;92,43187;3,0;17,0;0,8;3,0;17,0;0,8;6,1
+FRA;France;High income: OECD;High income;High facility;93,27016;5,0;3,5;0,7;5,0;3,5;0,7;0,0
+GAB;Gabon;Sub-Saharan Africa;Upper middle income;Lower middle facility;82,59139;7,0;31,0;6,1;7,0;31,0;6,1;2,5
+GMB;Gambia, The;Sub-Saharan Africa;Low income;Low facility;69,91287000000001;7,0;25,0;120,9;7,0;25,0;120,9;0,0
+GEO;Georgia;Europe & Central Asia;Upper middle income;High facility;99,34449000000001;1,0;2,0;2,2;1,0;2,0;2,2;0,0
+DEU;Germany;High income: OECD;High income;Lower middle facility;83,5948;9,0;8,0;6,5;9,0;8,0;6,5;31,0
+GHA;Ghana;Sub-Saharan Africa;Lower middle income;Lower middle facility;84,28737000000001;8,0;14,0;15,5;8,0;14,0;15,5;1,4
+GRC;Greece;High income: OECD;High income;High facility;92,36855000000001;4,0;12,5;1,6;4,0;12,5;1,6;0,0
+GRD;Grenada;Latin America & Caribbean;Upper middle income;Upper middle facility;87,25792000000001;6,0;15,0;14,0;6,0;15,0;14,0;0,0
+GTM;Guatemala;Latin America & Caribbean;Upper middle income;Upper middle facility;86,70682000000001;6,0;15,0;18,1;6,0;15,0;18,1;0,6
+GIN;Guinea;Sub-Saharan Africa;Low income;Lower middle facility;83,89756000000001;6,0;15,0;38,2;6,0;15,0;38,2;5,4
+GNB;Guinea-Bissau;Sub-Saharan Africa;Low income;Low facility;75,21887000000001;8,0;8,0;91,0;9,0;9,0;91,0;6,0
+GUY;Guyana;Latin America & Caribbean;Upper middle income;Upper middle facility;85,60845;7,0;18,0;9,4;7,0;18,0;9,4;0,0
+HTI;Haiti;Latin America & Caribbean;Low income;Low facility;33,801750000000006;12,0;97,0;200,3;12,0;97,0;200,3;12,4
+HND;Honduras;Latin America & Caribbean;Lower middle income;Low facility;69,98212000000001;11,0;42,0;39,1;11,0;42,0;39,1;0,0
+HKG;Hong Kong SAR, China;East Asia & Pacific;High income;High facility;98,14580000000001;2,0;1,5;1,1;2,0;1,5;1,1;0,0
+HUN;Hungary;High income: OECD;High income;Upper middle facility;87,89286000000001;6,0;7,0;4,9;6,0;7,0;4,9;40,1
+ISL;Iceland;High income: OECD;High income;Upper middle facility;90,71937000000001;5,0;11,5;1,7;5,0;11,5;1,7;6,7
+INDI;India;South Asia;Lower middle income;Lower middle facility;80,95635;10,0;16,47;14,4;10,0;16,47;14,4;0,0
+IND;India Mumbai;South Asia;Lower middle income;Lower middle facility;80,51376;10,0;17,0;16,8;10,0;17,0;16,8;0,0
+INDO;Indonesia;East Asia & Pacific;Lower middle income;Low facility;79,37615000000001;11,0;21,0;6,1;11,0;21,0;6,1;0,0
+IDN;Indonesia Jakarta;East Asia & Pacific;Lower middle income;Low facility;79,37615000000001;11,0;21,0;6,1;11,0;21,0;6,1;0,0
+IRN;Iran, Islamic Rep.;Middle East & North Africa;Upper middle income;Low facility;67,78809000000001;10,0;72,0;1,2;11,0;73,0;1,2;0,0
+IRQ;Iraq;Middle East & North Africa;Upper middle income;Low facility;76,54776000000001;8,0;26,0;38,8;9,0;27,0;38,8;16,6
+IRL;Ireland;High income: OECD;High income;High facility;94,40318;3,0;11,0;0,1;3,0;11,0;0,1;0,0
+ISR;Israel;High income: OECD;High income;High facility;92,60117000000001;4,0;11,0;2,8;4,0;11,0;2,8;0,0
+ITA;Italy;High income: OECD;High income;Upper middle facility;86,77811000000001;7,0;11,0;14,1;7,0;11,0;14,1;0,0
+JAM;Jamaica;Latin America & Caribbean;Upper middle income;High facility;97,34721;2,0;3,0;4,4;2,0;3,0;4,4;0,0
+JAP;Japan;High income: OECD;High income;Upper middle facility;86,09777000000001;8,0;11,15;7,5;8,0;11,15;7,5;0,0
+JPN;Japan Tokyo;High income: OECD;High income;Upper middle facility;86,00983000000001;8,0;11,5;7,5;8,0;11,5;7,5;0,0
+JOR;Jordan;Middle East & North Africa;Upper middle income;Lower middle facility;84,42881000000001;7,0;12,0;23,9;8,0;13,0;23,9;0,1
+KAZ;Kazakhstan;Europe & Central Asia;Upper middle income;High facility;92,95523000000001;5,0;5,0;0,3;5,0;5,0;0,3;0,0
+KEN;Kenya;Sub-Saharan Africa;Lower middle income;Lower middle facility;82,40901000000001;7,0;23,0;24,9;7,0;23,0;24,9;0,0
+KIR;Kiribati;East Asia & Pacific;Lower middle income;Low facility;78,19810000000001;7,0;31,0;36,1;7,0;31,0;36,1;12,9
+KOR;Korea, Rep.;High income: OECD;High income;High facility;93,35507000000001;3,0;8,0;14,6;3,0;8,0;14,6;0,0
+KSV;Kosovo;Europe & Central Asia;Upper middle income;High facility;95,67926000000001;3,0;5,5;1,0;3,0;5,5;1,0;0,0
+KWT;Kuwait;Middle East & North Africa;High income;Lower middle facility;81,4033;7,0;35,0;2,0;8,0;36,0;2,0;0,0
+KGZ;Kyrgyz Republic;Europe & Central Asia;Lower middle income;High facility;92,96776000000001;4,0;10,0;1,9;4,0;10,0;1,9;0,0
+LAO;Lao PDR;East Asia & Pacific;Lower middle income;Low facility;60,93473;10,0;174,0;6,6;10,0;174,0;6,6;0,0
+LVA;Latvia;High income: OECD;High income;High facility;94,11676000000001;4,0;5,5;1,7;4,0;5,5;1,7;0,0
+LBN;Lebanon;Middle East & North Africa;Upper middle income;Low facility;78,63273000000001;8,0;15,0;40,0;8,0;15,0;40,0;38,9
+LSO;Lesotho;Sub-Saharan Africa;Lower middle income;Lower middle facility;83,12674000000001;7,0;29,0;7,1;7,0;29,0;7,1;0,0
+LBR;Liberia;Sub-Saharan Africa;Low income;Upper middle facility;88,14452000000001;5,0;18,0;12,6;5,0;18,0;12,6;0,0
+LBY;Libya;Middle East & North Africa;Upper middle income;Low facility;73,5575;10,0;35,0;23,0;10,0;35,0;23,0;26,6
+LIE;Liechtenstein;Europe & Central Asia;High income;Low facility;73,04426000000001;10,0;46,0;2,2;10,0;46,0;2,2;32,2
+LTU;Lithuania;High income: OECD;High income;High facility;93,17569;4,0;5,5;0,5;4,0;5,5;0,5;17,5
+LUX;Luxembourg;High income: OECD;High income;Upper middle facility;88,72537000000001;5,0;16,5;1,7;5,0;16,5;1,7;18,5
+MDG;Madagascar;Sub-Saharan Africa;Low income;Upper middle facility;88,10325;5,0;8,0;33,0;5,0;8,0;33,0;0,0
+MWI;Malawi;Sub-Saharan Africa;Low income;Low facility;77,17838;7,0;37,0;38,6;7,0;37,0;38,6;0,0
+MYS;Malaysia;East Asia & Pacific;Upper middle income;Lower middle facility;82,77868000000001;9,0;13,0;11,6;10,0;14,0;11,6;0,0
+MDV;Maldives;South Asia;Upper middle income;Upper middle facility;89,17319;6,0;12,0;4,0;6,0;12,0;4,0;1,3
+MLI;Mali;Sub-Saharan Africa;Low income;Lower middle facility;84,04886;5,0;11,0;56,8;5,0;11,0;56,8;5,3
+MLT;Malta;Middle East & North Africa;High income;Lower middle facility;84,85514;8,0;16,0;7,1;8,0;16,0;7,1;1,0
+MHL;Marshall Islands;East Asia & Pacific;Upper middle income;Upper middle facility;88,44127;5,0;17,0;12,2;5,0;17,0;12,2;0,0
+MRT;Mauritania;Sub-Saharan Africa;Lower middle income;High facility;92,17627;4,0;6,0;16,2;4,0;6,0;16,2;0,0
+MUS;Mauritius;Sub-Saharan Africa;Upper middle income;High facility;94,34099;4,0;5,0;0,9;4,0;5,0;0,9;0,0
+MEXI;Mexico;Latin America & Caribbean;Upper middle income;Upper middle facility;85,93813;7,83;8,415;16,2;7,83;8,415;16,2;0,0
+MEX;Mexico Mexico City;Latin America & Caribbean;Upper middle income;Lower middle facility;85,52136;8,0;8,5;17,4;8,0;8,5;17,4;0,0
+FSM;Micronesia, Fed. Sts.;East Asia & Pacific;Lower middle income;Low facility;69,56327;7,0;16,0;141,7;7,0;16,0;141,7;0,0
+MDA;Moldova;Europe & Central Asia;Lower middle income;High facility;95,55420000000001;3,0;4,0;5,0;3,0;4,0;5,0;0,0
+MNG;Mongolia;East Asia & Pacific;Lower middle income;Upper middle facility;86,65;8,0;12,0;1,3;8,0;12,0;1,3;0,0
+MNE;Montenegro;Europe & Central Asia;Upper middle income;Upper middle facility;86,65185000000001;8,0;12,0;1,3;8,0;12,0;1,3;0,0
+MAR;Morocco;Middle East & North Africa;Lower middle income;High facility;92,98835000000001;4,0;9,0;3,7;4,0;9,0;3,7;0,0
+MOZ;Mozambique;Sub-Saharan Africa;Low income;Low facility;67,55817;10,0;17,0;120,5;10,0;17,0;120,5;0,0
+MMR;Myanmar;East Asia & Pacific;Lower middle income;Low facility;77,33030000000001;12,0;14,0;24,8;12,0;14,0;24,8;0,0
+NAM;Namibia;Sub-Saharan Africa;Upper middle income;Low facility;72,06684;10,0;54,0;10,0;10,0;54,0;10,0;0,0
+NPL;Nepal;South Asia;Low income;Lower middle facility;82,13011;8,0;18,5;24,4;8,0;18,5;24,4;0,0
+NLD;Netherlands;High income: OECD;High income;High facility;94,30562;4,0;3,5;4,2;4,0;3,5;4,2;0,0
+NZL;New Zealand;High income: OECD;High income;High facility;99,97539;1,0;0,5;0,2;1,0;0,5;0,2;0,0
+NIC;Nicaragua;Latin America & Caribbean;Lower middle income;Low facility;79,83795;7,0;14,0;63,6;7,0;14,0;63,6;0,0
+NER;Niger;Sub-Saharan Africa;Low income;High facility;91,46094000000001;4,0;10,0;8,1;4,0;10,0;8,1;11,6
+NIGE;Nigeria;Sub-Saharan Africa;Lower middle income;Lower middle facility;82,96681000000001;8,46;10,92;27,6;8,46;10,92;27,6;0,0
+NGA;Nigeria Lagos;Sub-Saharan Africa;Lower middle income;Lower middle facility;83,87221000000001;8,0;10,0;27,6;8,0;10,0;27,6;0,0
+MKD;North Macedonia;Europe & Central Asia;Upper middle income;Upper middle facility;88,59246;6,0;15,0;3,3;6,0;15,0;3,3;0,0
+NOR;Norway;High income: OECD;High income;High facility;94,31365000000001;4,0;4,0;0,9;4,0;4,0;0,9;4,6
+OMN;Oman;Middle East & North Africa;High income;High facility;93,43323000000001;4,0;4,0;3,3;5,0;5,0;3,3;0,0
+PAKI;Pakistan;South Asia;Lower middle income;Lower middle facility;81,88874000000001;10,0;16,5;6,8;10,0;16,5;6,8;0,0
+PAK;Pakistan Karachi;South Asia;Lower middle income;Lower middle facility;81,88874000000001;10,0;16,5;6,8;10,0;16,5;6,8;0,0
+PLW;Palau;East Asia & Pacific;High income;Lower middle facility;81,94691;8,0;28,0;2,9;8,0;28,0;2,9;7,8
+PAN;Panama;Latin America & Caribbean;High income;High facility;91,97362000000001;5,0;6,0;6,1;5,0;6,0;6,1;0,0
+PNG;Papua New Guinea;East Asia & Pacific;Lower middle income;Lower middle facility;79,90931;6,0;41,0;20,5;6,0;41,0;20,5;0,0
+PRY;Paraguay;Latin America & Caribbean;Upper middle income;Low facility;75,20211;7,0;35,0;58,4;7,0;35,0;58,4;0,0
+PER;Peru;Latin America & Caribbean;Upper middle income;Lower middle facility;82,35807000000001;8,0;26,0;7,5;8,0;26,0;7,5;0,0
+PHL;Philippines;East Asia & Pacific;Lower middle income;Low facility;69,29612;14,0;34,0;24,0;14,0;34,0;24,0;2,8
+POL;Poland;High income: OECD;High income;Lower middle facility;82,84801;5,0;37,0;11,8;5,0;37,0;11,8;10,0
+PRT;Portugal;High income: OECD;High income;Upper middle facility;90,89423000000001;6,0;6,5;2,0;6,0;6,5;2,0;0,0
+PRI;Puerto Rico;Latin America & Caribbean;High income;Upper middle facility;91,22860000000001;6,0;5,5;1,3;6,0;5,5;1,3;0,0
+QAT;Qatar;Middle East & North Africa;High income;Upper middle facility;85,99917;8,0;8,5;6,7;9,0;9,5;6,7;0,0
+ROM;Romania;Europe & Central Asia;Upper middle income;Lower middle facility;83,9046;6,0;35,0;0,4;6,0;35,0;0,4;0,5
+RUSS;Russian Federation;Europe & Central Asia;Upper middle income;High facility;93,04291;4,0;10,1;1,1;4,0;10,1;1,1;0,0
+RUS;Russian Federation Moscow;Europe & Central Asia;Upper middle income;High facility;92,81708;4,0;11,0;1,1;4,0;11,0;1,1;0,0
+RWA;Rwanda;Sub-Saharan Africa;Low income;Upper middle facility;90,15385;5,0;4,0;24,7;5,0;4,0;24,7;0,0
+WSM;Samoa;East Asia & Pacific;Upper middle income;High facility;92,55860000000001;4,0;9,0;7,2;4,0;9,0;7,2;0,0
+SMR;San Marino;Europe & Central Asia;High income;Lower middle facility;83,70622;8,0;12,5;9,0;8,0;12,5;9,0;29,8
+STP;São Tomé and Príncipe;Sub-Saharan Africa;Lower middle income;Low facility;78,32302;6,0;7,0;12,3;6,0;7,0;12,3;178,5
+SAU;Saudi Arabia;Middle East & North Africa;High income;Lower middle facility;80,06840000000001;10,0;17,0;6,6;12,0;19,0;6,6;0,0
+SEN;Senegal;Sub-Saharan Africa;Lower middle income;Upper middle facility;89,94317000000001;4,0;6,0;32,0;4,0;6,0;32,0;4,3
+SRB;Serbia;Europe & Central Asia;Upper middle income;High facility;92,58872000000001;5,0;5,5;2,2;5,0;5,5;2,2;0,0
+SYC;Seychelles;Sub-Saharan Africa;High income;Low facility;78,65065000000001;9,0;32,0;13,4;9,0;32,0;13,4;0,0
+SLE;Sierra Leone;Sub-Saharan Africa;Low income;Upper middle facility;91,18307;5,0;8,0;8,4;5,0;8,0;8,4;0,0
+SGP;Singapore;East Asia & Pacific;High income;High facility;98,22693000000001;2,0;1,5;0,4;2,0;1,5;0,4;0,0
+SVK;Slovak Republic;High income: OECD;High income;Lower middle facility;82,01841;8,0;26,5;1,0;8,0;26,5;1,0;16,4
+SVN;Slovenia;High income: OECD;High income;High facility;92,87697000000001;3,0;8,0;0,0;3,0;8,0;0,0;36,8
+SLB;Solomon Islands;East Asia & Pacific;Lower middle income;Lower middle facility;85,52284;7,0;9,0;28,1;7,0;9,0;28,1;0,0
+SOM;Somalia;Sub-Saharan Africa;Low income;Low facility;46,367140000000006;9,0;70,0;195,2;9,0;70,0;195,2;0,0
+ZAF;South Africa;Sub-Saharan Africa;Upper middle income;Lower middle facility;81,22425000000001;7,0;40,0;0,2;7,0;40,0;0,2;0,0
+SSD;South Sudan;Sub-Saharan Africa;Low income;Low facility;65,3631;12,0;13,0;122,6;12,0;13,0;122,6;0,0
+ESP;Spain;High income: OECD;High income;Upper middle facility;86,91036000000001;7,0;12,5;4,0;7,0;12,5;4,0;12,0
+LKA;Sri Lanka;South Asia;Upper middle income;Upper middle facility;87,86865;7,0;9,0;9,4;7,0;9,0;9,4;0,0
+KNA;St. Kitts and Nevis;Latin America & Caribbean;High income;Upper middle facility;85,77593;7,0;18,5;7,0;7,0;18,5;7,0;0,0
+LCA;St. Lucia;Latin America & Caribbean;Upper middle income;Upper middle facility;89,17957000000001;5,0;11,0;18,4;5,0;11,0;18,4;0,0
+VCT;St. Vincent and the Grenadines;Latin America & Caribbean;Upper middle income;Upper middle facility;86,86974000000001;7,0;10,0;15,4;7,0;10,0;15,4;0,0
+SDN;Sudan;Sub-Saharan Africa;Lower middle income;Low facility;76,3468;9,0;34,0;20,9;10,0;35,0;20,9;0,0
+SUR;Suriname;Latin America & Caribbean;Upper middle income;Low facility;61,57340000000001;8,0;66,0;93,4;8,0;66,0;93,4;0,0
+SWE;Sweden;High income: OECD;High income;High facility;93,08984000000001;4,0;7,5;0,5;4,0;7,5;0,5;10,8
+CHE;Switzerland;High income: OECD;High income;Upper middle facility;88,41443000000001;6,0;10,0;2,3;6,0;10,0;2,3;25,0
+SYR;Syrian Arab Republic;Middle East & North Africa;Low income;Lower middle facility;80,9916;7,0;15,0;7,6;8,0;16,0;7,6;75,7
+TWN;Taiwan, China;East Asia & Pacific;High income;High facility;94,43025;3,0;10,0;1,9;3,0;10,0;1,9;0,0
+TJK;Tajikistan;Europe & Central Asia;Low income;Upper middle facility;90,95102000000001;4,0;10,0;18,0;4,0;10,0;18,0;0,0
+TZA;Tanzania;Sub-Saharan Africa;Low income;Low facility;74,28037;10,0;27,5;45,6;10,0;27,5;45,6;0,0
+THA;Thailand;East Asia & Pacific;Upper middle income;High facility;92,34405000000001;5,0;6,0;3,1;5,0;6,0;3,1;0,0
+TMP;Timor-Leste;East Asia & Pacific;Lower middle income;Upper middle facility;89,41265000000001;6,0;13,0;0,6;6,0;13,0;0,6;0,2
+TGO;Togo;Sub-Saharan Africa;Low income;Upper middle facility;88,70477000000001;4,0;5,5;41,7;4,0;5,5;41,7;6,7
+TON;Tonga;East Asia & Pacific;Upper middle income;Upper middle facility;90,87623;4,0;16,0;6,5;4,0;16,0;6,5;0,0
+TTO;Trinidad and Tobago;Latin America & Caribbean;High income;Upper middle facility;88,57161;7,0;10,5;0,7;7,0;10,5;0,7;0,0
+TUN;Tunisia;Middle East & North Africa;Lower middle income;Upper middle facility;88,50569;7,0;9,0;4,3;7,0;9,0;4,3;0,0
+TUR;Turkey;Europe & Central Asia;Upper middle income;Upper middle facility;88,21358000000001;7,0;7,0;10,6;7,0;7,0;10,6;0,0
+UGA;Uganda;Sub-Saharan Africa;Low income;Low facility;71,11619;13,0;24,0;42,7;13,0;24,0;42,7;0,0
+UKR;Ukraine;Europe & Central Asia;Lower middle income;Upper middle facility;91,06757;6,0;6,5;0,6;6,0;6,5;0,6;0,0
+ARE;United Arab Emirates;Middle East & North Africa;High income;High facility;94,06359;2,0;3,5;22,8;3,0;4,5;22,8;0,0
+GBR;United Kingdom;High income: OECD;High income;High facility;94,57827;4,0;4,5;0,0;4,0;4,5;0,0;0,0
+US;United States;High income: OECD;High income;Upper middle facility;91,23483;6,0;5,6;1,0;6,0;5,6;1,0;0,0
+USA;United States New York City;High income: OECD;High income;High facility;91,61192000000001;6,0;4,0;1,2;6,0;4,0;1,2;0,0
+URY;Uruguay;Latin America & Caribbean;High income;Upper middle facility;89,77999000000001;5,0;6,5;22,6;5,0;6,5;22,6;0,0
+UZB;Uzbekistan;Europe & Central Asia;Lower middle income;High facility;96,04325000000001;3,0;3,0;3,1;3,0;3,0;3,1;0,0
+VUT;Vanuatu;East Asia & Pacific;Lower middle income;Lower middle facility;81,52392;7,0;18,0;42,0;7,0;18,0;42,0;0,0
+VEN;Venezuela, RB;Latin America & Caribbean;Upper middle income;Low facility;25,000000000000004;20,0;230,0;393,0;20,0;230,0;393,0;0,0
+VNM;Vietnam;East Asia & Pacific;Lower middle income;Lower middle facility;84,79815;8,0;17,0;6,1;8,0;17,0;6,1;0,0
+WBG;West Bank and Gaza;Middle East & North Africa;Lower middle income;Low facility;69,37169;10,0;43,0;46,8;11,0;44,0;46,8;0,0
+YEM;Yemen, Rep.;Middle East & North Africa;Low income;Low facility;67,00649;6,0;40,0;118,8;7,0;41,0;118,8;0,0
+ZMB;Zambia;Sub-Saharan Africa;Lower middle income;Lower middle facility;85,06917000000001;7,0;8,5;32,8;7,0;8,5;32,8;0,0
+ZWE;Zimbabwe;Sub-Saharan Africa;Lower middle income;Low facility;66,47833;9,0;32,0;110,7;9,0;32,0;110,7;0,0
