@@ -1,0 +1,415 @@
+#
+ # Example LSTM (Long Short-Term Memory) for Sales Forecasting with Exogenous Factors
+
+# COMMAND ----------
+
+#
+ https://www.kaggle.com/datasets/yasserh/walmart-dataset
+
+ https://github.com/KunalGarodi/Walmart-Sales-Forecasting-Project/blob/main/Dataset/Walmart%20DataSet.csv
+
+ https://medium.com/@zargi.teddy7/lstm-long-short-term-memory-for-sales-forecasting-with-exogenous-features-a-deep-dive-into-fe922c283c85
+
+# COMMAND ----------
+
+import pandas as pd
+
+# Link bruto do CSV no GitHub
+url = "https://raw.githubusercontent.com/KunalGarodi/Walmart-Sales-Forecasting-Project/main/Dataset/Walmart%20DataSet.csv"
+
+# Leitura do CSV diretamente da URL
+df = pd.read_csv(url)
+
+# Exibir as primeiras linhas
+print(df.head())
+
+
+# COMMAND ----------
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import seaborn as sns
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, LSTM, Dropout
+from tensorflow.keras.callbacks import EarlyStopping
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+# COMMAND ----------
+
+ %pip install keras-tuner
+
+# COMMAND ----------
+
+
+import keras_tuner as kt
+from tensorflow.keras.optimizers import Adam
+
+# COMMAND ----------
+
+#  padronizar data para o modelo
+# To handle this situation, we can enable dayfirst=True, to specify that the day comes first.
+
+df['Date'] = pd.to_datetime(df['Date'], dayfirst=True)
+df.head()
+
+
+# COMMAND ----------
+
+#
+ # 1) Exploratory Data Analysis
+ First we have to describe the data so that when we create data visualizations we can check again whether the data visualizations we have created are in accordance with the contents of describe().
+
+ Choose all columns except Store, Date, and Holiday_Flag.
+
+# COMMAND ----------
+
+columns_to_describe = [col for col in df.columns if col not in ['Store','Date','Holiday_Flag']]
+df[columns_to_describe].describe()
+
+# COMMAND ----------
+
+#
+ # 2) Distribution of Weekly Sales
+
+
+# COMMAND ----------
+
+plt.figure(figsize=(10, 6))
+sns.histplot(df['Weekly_Sales'], kde=True, bins=30, color='blue')
+plt.gca().xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, pos: '{:,}'.format(int(x))))
+plt.title("Distribution of Weekly Sales Across All Stores")
+plt.xlabel("Weekly Sales")
+plt.ylabel("Frequency")
+plt.savefig('distribution.png', transparent=True)
+plt.show()
+
+# COMMAND ----------
+
+#
+ Most stores have weekly sales clustered around $500.000, indicating this as the usual sales performance for a majority of the weeks. Extreme sales number like $3.500.000 are very rare and can be considered as outliers.
+
+
+
+# COMMAND ----------
+
+#
+ # 3) Weekly Sales Trend
+
+
+# COMMAND ----------
+
+plt.figure(figsize=(15, 6))
+plt.plot(df['Date'], df['Weekly_Sales'], label='Weekly Sales')
+plt.title("Weekly Sales Trend Across All Stores")
+plt.xlabel("Date")
+plt.gca().yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, pos: '{:,}'.format(int(y))))
+plt.ylabel("Weekly Sales")
+plt.legend()
+plt.savefig('trend.png', transparent=True)
+plt.show()
+
+# COMMAND ----------
+
+#
+ The spikes in sales around the end of 2010-start of 2011 and end of 2011-start of 2012, both surpassing $3.500.000. These spikes clearly align with the holiday and post-holiday shopping season (Christmas, New Year’s Eve, and post-holiday clearance sales).
+
+# COMMAND ----------
+
+#
+ # 4) Correlation Heatmap
+
+
+# COMMAND ----------
+
+corr_matrix = df[['Weekly_Sales', 'Store', 'Holiday_Flag', 'Temperature', 'Fuel_Price', 'CPI', 'Unemployment']].corr()
+sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", fmt='.2f', square=True, cbar_kws={"shrink": .8},linewidths=.5, linecolor='black')
+plt.title("Correlation Heatmap")
+plt.savefig('correlation.png', transparent=True)
+plt.show()
+
+# COMMAND ----------
+
+#
+ - Store (-0.34): there is a moderate negative correlation between store number and weekly sales. As the store number increases (from Store 1 to Store 45), weekly sales tend to decrease.
+
+ - Holiday_Flag (0.04): shows a very weak positive correlation. When there’s a holiday (Holiday_Flag = 1), sales tend to increase slightly, but the effect is so small it’s barely noticeable.
+
+ - Temperature (-0.06): indicates a very weak negative correlation. As temperature increases, there’s a slight tendency for weekly sales to decrease, but the relationship is so weak that it’s almost negligible.
+
+ - Fuel_Price (0.01): this means means there’s almost no relationship between fuel prices and sales. Changes in fuel prices have little to no direct impact on weekly sales at Walmart.
+
+ - CPI (-0.07): weak negative correlation. As CPI increases (indicating rising prices for goods and services), weekly sales tend to slightly decrease — but the effect is so small it’s almost negligible
+
+ - Unemployment (-0.11): weak negative correlation again. As unemployment increases, weekly sales tend to decrease slightly — but the effect is small.
+
+# COMMAND ----------
+
+#
+ The weak correlations in the heatmap indicate that the features in the dataset (Holiday_Flag, Temperature, Fuel_Price, CPI, and Unemployment) do not strongly influence Weekly_Sales. This can suggest two things:
+
+ - The dataset might be missing key predictive factors, such as promotions, advertising campaigns, or local events.
+
+ - The relationship between these variables and sales might be non-linear or influenced by interactions between variables, which a simple correlation matrix might not reveal.
+
+
+ This weak relationships between the features and Weekly_Sales could negatively impact the model’s performance to predict weekly sales as the model would not be able to learn the significant impact of each feature to weekly sales. Let’s see if this is true when we build the model later.
+
+
+
+# COMMAND ----------
+
+# Scatter Plots
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x=df['Store'], y=df['Weekly_Sales'], alpha=0.5, color='blue', label='Data Points')
+sns.kdeplot(x=df['Store'], y=df['Weekly_Sales'], cmap='Reds', fill=True, alpha=0.6, label='Density')
+plt.title('Weekly Sales vs Store')
+plt.xlabel('Store')
+plt.ylabel('Weekly Sales')
+plt.legend()
+plt.savefig('store_vs_weekly_sales.png', transparent=True)
+plt.show()
+
+# COMMAND ----------
+
+#
+ The highest weekly sales occur at store 3–20. and the most dense sales happen between store 27–45. Here are the most likely explanations:
+
+ - High Weekly Sales at Stores 3–20: These stores might be larger in size and located in wealthy neighborhoods so these stores could contribute to higher sales due to higher spending capacity. Also, these stores might have better assortment of expensive products that are in higher demand in their specific regions.
+
+ - Dense Sales in Stores 27–45: These stores may be located in suburban areas and serve smaller communities, hence the steady (although not extraordinary) sales. Stores in this range also might be geographically close to one another, serving overlapping markets with moderate sales volume.
+
+# COMMAND ----------
+
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x=df['Temperature'], y=df['Weekly_Sales'], alpha=0.5, color='blue', label='Data Points')
+sns.kdeplot(x=df['Temperature'], y=df['Weekly_Sales'], cmap='Reds', fill=True, alpha=0.6, label='Density')
+plt.title('Weekly Sales vs Temperature')
+plt.xlabel('Temperature')
+plt.ylabel('Weekly Sales')
+plt.legend()
+plt.savefig('temperature_vs_weekly_sales.png', transparent=True)
+plt.show()
+
+# COMMAND ----------
+
+#
+ The lowest weekly sales occur when the temperature is between 0°F to 19°F. The highest weekly sales occur at temperatures between 20°F to 60°F, with the highest density of sales observed around 60°F to 80°F. The relationship between temperature and weekly sales could be influenced by consumer behavior patterns like:
+
+ - 0°F to 19°F (Low Sales): There are few reasons why weekly sales are very low at this range. Firstly, extreme cold weather conditions (heavy snow, icy roads, and freezing temperature) could discourage people from traveling to Walmart physical stores. Secondly, consumers may stockpile before the extreme cold weather comes. Lastly, consumers may prefer online shopping, reducing in-store sales that contribute to weekly sales figures.
+
+ - 20°F to 60°F (High Sales): This temperature range typically occurs in Spring and Fall, and it is the most favorable for shopping compared to extreme hot and cold temperatures because of comfortable shopping conditions. Also, spring is a time for home renovations, landscaping, and gardening when people spend a lot of money to buy paint, hardware, and DIY project materials for spring cleaning or redecorating. While fall is when people do back-to-school shopping then start preparing for Thanksgiving, Halloween, and even early Christmas shopping.
+
+ - 60°F to 80°F (Dense Sales): This temperature range aligns with summer, a period when consumer outdoor-related activities are very high due to summer vacations, leading to increased leisure spending. In this period, Walmart’s customers often make smaller but frequent purchases just like groceries, snacks, barbecue supplies, outdoor equipment, beverages, etc. Also, towards the end of this period, back-to school shopping also contributes to increased weekly sales, leading to high sales density.
+
+# COMMAND ----------
+
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x=df['Fuel_Price'], y=df['Weekly_Sales'], alpha=0.5, color='blue', label='Data Points')
+sns.kdeplot(x=df['Fuel_Price'], y=df['Weekly_Sales'], cmap='Reds', fill=True, alpha=0.6, label='Density')
+plt.title('Weekly Sales vs Fuel Price')
+plt.xlabel('Fuel Price')
+plt.ylabel('Weekly Sales')
+plt.legend()
+plt.savefig('fuel_price_vs_weekly_sales.png', transparent=True)
+plt.show()
+
+# COMMAND ----------
+
+#
+ in the plot above, the highest sales occur at a different point than the high sales density because:
+
+ - $3.0 to $3.5 (High Sales): One possible reason of high weekly sales when the fuel price is between $3.0-$3.5, is because when the range of fuel price was $2.5–$3.0, consumers may not perceive these prices as a significant economic pressure, meaning their discretionary spending on Walmart goods doesn’t dramatically change. Then a moderate rise in fuel prices ($3.0 to $3.5) happens and this lead to panic-buying behavior or stockpiling, as consumers anticipate further price increases. This drives the consumers to make larger purchases at Walmart, resulting in very high weekly sales.
+
+ - $3.5 to $3.9 (Dense Sales): High-density sales reflect more frequent but smaller transactions, most likely caused by customers’ budget-conscious behavior. We can also notice the fact that customers still continue making frequent purchases at Walmart, even when fuel prices are in the range of $3.5–$3.9 per liter. This happens because we all know that Walmart is known for offering competitive prices, especially on essential goods like groceries, household items, and everyday necessities. When fuel prices rise, consumers may cut back on spending elsewhere but still rely on Walmart for affordable options, making frequent visits to manage their budgets.
+
+# COMMAND ----------
+
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x=df['CPI'], y=df['Weekly_Sales'], alpha=0.5, color='blue', label='Data Points')
+sns.kdeplot(x=df['CPI'], y=df['Weekly_Sales'], cmap='Reds', fill=True, alpha=0.6, label='Density')
+plt.title('Weekly Sales vs CPI')
+plt.xlabel('CPI')
+plt.ylabel('Weekly Sales')
+plt.legend()
+plt.savefig('cpi_vs_weekly_sales.png', transparent=True)
+plt.show()
+
+# COMMAND ----------
+
+#
+ It is very possible that the ranges where there are zero sales exist because those CPI ranges (e.g, 146–179) simply do not appear in the dataset’s time period. This could happen because this dataset only covers limited specific years and the CPI during this period might have fluctuated within narrower ranges (125–145 and 180–230). And the gap (146–179) might represent a transitional range that wasn’t reached during the dataset’s timeframe.
+
+
+
+# COMMAND ----------
+
+plt.figure(figsize=(8, 6))
+sns.scatterplot(x=df['Unemployment'], y=df['Weekly_Sales'], alpha=0.5, color='blue', label='Data Points')
+sns.kdeplot(x=df['Unemployment'], y=df['Weekly_Sales'], cmap='Reds', fill=True, alpha=0.6, label='Density')
+plt.title('Weekly Sales vs Unemployment')
+plt.xlabel('Unemployment')
+plt.ylabel('Weekly Sales')
+plt.legend()
+plt.savefig('unemployment_vs_weekly_sales.png', transparent=True)
+plt.show()
+
+# COMMAND ----------
+
+#
+ - When the unemployment rate is around 3–5 (low), most people are employed and likely have stable incomes. Consumers may choose higher-end options. Walmart stores, known for their affordability, might not be the first choice for shoppers in this income bracket, resulting in lower and less dense sales.
+
+ - When the unemployment rate is around 6–9 (moderate), many households experience financial strain due to job losses or reduced income. Walmart becomes a preferred shopping destination because of it’s reputation for offering affordable goods. Government support like unemployment benefits could also boost purchasing power temporarily, leading to more weekly sales at Walmart stores.
+
+ - When the unemployment rate is around 10–15 (high), households face severe financial hardship. The drop in density indicates fewer transactions, as fewer people have the financial ability to shop regularly, even at Walmart.
+
+# COMMAND ----------
+
+#
+ # 5) Holidays’ Impact
+
+
+# COMMAND ----------
+
+plt.figure(figsize=(10, 6))
+plt.gca().yaxis.set_major_formatter(ticker.FuncFormatter(lambda y, pos: '{:,}'.format(int(y))))
+sns.boxplot(x='Holiday_Flag', y='Weekly_Sales', data=df)
+plt.title("Impact of Holidays on Weekly Sales Across All Stores")
+plt.xticks([0, 1], ['No Holiday', 'Holiday'])
+plt.savefig('holiday.png', transparent=True)
+plt.show()
+
+# COMMAND ----------
+
+#
+ Key Components:
+
+ - Median: The line inside the box represents the median (50th percentile), which is around 1.000.000 for both No Holiday and Holiday.
+
+ - Interquartile Range (IQR) for No Holiday Box: The box contains Q1 (25th percentile) which is the lower part of the box — from just above $500.000 to just below $1.000.000. Followed by Q3 (75th percentile) which is the upper part of the box — from just below $1.000.000 to just below $1.500.000.
+
+ - Interquartile Range (IQR) for Holiday Box: The box contains Q1 (25th percentile) which is the lower part of the box — from just above $500.000 to just above $1.000.000. Followed by Q3 (75th percentile) which is the upper part of the box — from just above $1.000.000 to just above $1.500.000.
+
+ - Upper Whiskers: No Holiday ends at ~$2.700.000, with outliers up to ~$4.000.000. Holiday: ends at ~$3.000.000.
+
+ - Lower Whiskers: represents the smallest non-outlier value in the dataset.
+
+ Surprisingly, the highest sales occur during non-holiday weeks, even though holiday weeks have a wider range (larger whisker). This is counterintuitive as holidays typically boost sales. Investigating the reasons of these non-holiday outliers is important to make strategies for future sales growth.
+
+# COMMAND ----------
+
+#
+ # 6) Feature Engineering:
+
+ Extract Time-Related Features
+
+# COMMAND ----------
+
+df['Week_of_Year'] = df['Date'].dt.isocalendar().week
+df['Month'] = df['Date'].dt.month
+df['Quarter'] = df['Date'].dt.quarter
+
+# COMMAND ----------
+
+#
+ Explanations:
+
+ - df[‘Week_of_Year’] = df[‘Date’].dt.isocalendar().week: this extracts the week number of the year (1 to 52 or 53 depending on the year). Weekly sales pattern could be important in time-series sales forecasting. For example, seasonal sales spikes likely occur in specific weeks of the year like Black Friday or Christmas.
+
+ - df[‘Month’] = df[‘Date’].dt.month: this extracts the month as an integer (1 = January, 12 = December). Monthly sales trends are very likely exist in this dataset. Certain months like December may have higher sales due to Christmas and holiday shopping. While other months, especially January, might have lower sales as people cut back after the holiday season binge-shopping.
+
+ - df[‘Quarter’] = df[‘Date’].dt.quarter: this extracts the quarter of the year as an integer (1 = Jan-Mar, 2 = Apr-Jun, 3 = Jul-Sep, 4 = Oct-Dec). Quarterly patterns may also affect sales as the fourth quarter (Q4) is a pivotal time for retail businesses, as it’s the busiest time of year for most businesses.
+
+ - We don’t extract the day of the week because because all the data is only recorded on Fridays. Day_of_Week feature may not provide much predictive value since it doesn't vary in the dataset.
+
+# COMMAND ----------
+
+#
+ # 7) One-Hot Encoding
+
+
+# COMMAND ----------
+
+# Apply one-hot encoding to 'Store, 'Month' and 'Quarter'
+df = pd.get_dummies(df, columns=['Store', 'Month', 'Quarter'], drop_first=False)
+
+# Convert the boolean values (True/False) to integers (1/0)
+for col in df.columns:
+    if 'Store_' in col or 'Month_' in col or 'Quarter_' in col:
+        df[col] = df[col].astype(int)
+
+# COMMAND ----------
+
+#
+ The decision to one-hot encode Store, Month, and Quarter comes from the nature of these features:
+
+ - Store: This represents different Walmart store locations, numbered from 1 to 45. These store numbers are categorical, not numerical with inherent relationships or order (store 1 is not “less than” store 2). Therefore, one-hot encoding avoids misleading the model into assuming any ordinal relationship between stores.
+
+ - Month: This feature represents the calendar month (e.g., January = 1, February = 2, …, December = 12). One-hot encoding treats each month as a separate category, allowing the model to capture unique patterns associated with each month. Without one-hot encoding, the model might assume that February is closer to March than December, which is incorrect in retail weekly sales context. In retail sales context, February share more sales similarities with December (both are winter months, also December has Christmas and end year holiday, and February has a Valentine’s day) than with March, even if March is chronologically closer to February.
+
+ - Quarter: The Quarter feature represents the fiscal quarter of the year (1, 2, 3, or 4), which groups months into broader seasonal categories. Just like months, quarters are ordinal but do not have a meaningful numerical relationship between each quarter. One-hot encoding allows the model to recognize seasonal patterns differences without imposing a false numerical relationship between quarters (e.g., Q1 being “less than” Q4)
+
+ - One-hot encoding the Week_of_Year would create 52 extra columns. This would make the model unnecessarily complex.
+
+ - Another reason why we shouldn’t one-hot encode Week_of_Year is because Week_of_Year is a cyclical numeric variable, which means weeks have a continuous and smooth transition. A week is only 7 days long, so week-to-week transitions are gradual and smooth. Week 50 → Week 51 → Week 52 → Week 1 follows a smooth transition and there is no major gap in behavior between adjacent weeks. Unlike Month which is less smooth because a month is longer (28–31 days) and may have sharp changes in trends: December (holiday season) → January (post-holiday sales drop).
+
+ - Weeks are naturally continuous, while months have more distinct trends. This is why one-hot encoding is necessary for months to capture categorical differences between each month.
+
+# COMMAND ----------
+
+#
+ Then, the reason why we should convert the encoded values to integers is because by default, pd.get_dummies()outputs True and False (boolean values), not integers. Most machine learning algorithms, especially neural networks like LSTM, expect numerical data for training. This is because the model performs mathematical operations on the data, and Booleans (True and False) would not work as intended. .astype(int) will convert True to 1 and False to 0, making the data usable for training.
+
+ Lastly, the reason we use drop_first=False and not drop_first=True is because dropping the first column is not required for models like LSTMs because unlike linear models, LSTMs are robust and do not get confused by multicollinearity (redundant features). Having all the one-hot encoded columns without dropping the first one is completely acceptable because LSTMs focus on sequence patterns, not correlations between features.
+
+
+# COMMAND ----------
+
+# Result:
+
+df.tail()
+
+# COMMAND ----------
+
+#
+ # 8) Split the Data
+
+# COMMAND ----------
+
+# Define the features
+features = (
+    [col for col in df.columns if col.startswith('Month_')] +  # Add one-hot encoded 'Month' columns
+    [col for col in df.columns if col.startswith('Quarter_')] +  # Add one-hot encoded 'Quarter' columns
+    ['Week_of_Year', 'Holiday_Flag', 'Temperature', 'Fuel_Price', 'CPI', 'Unemployment']  # Add the rest
+)
+
+# Define the target
+target = 'Weekly_Sales'
+
+X = df[features]
+y = df[target]
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+
+# COMMAND ----------
+
+#
+ This code prepares the data for the LSTM model to predict Weekly_Sales using exogenous features.
+
+ - col.startswith('Month_'): Automatically identifies all the one-hot encoded columns for Month.
+
+ - col.startswith('Quarter_'): Automatically identifies all the one-hot encoded columns for Quarter.
+
+ - The rest of the features ( Week_of_Year, Holiday_Flag, etc.) are included directly in the features list.
+
+ - The data is split into training (80%) and testing (20%) sets.
+
+ - shuffle=False is used in the train_test_split() function to ensure that the data is not shuffled before it’s split into training and testing sets. This keeps the data in it’s natural time order. The training data contains past data, and the testing contains future data, mimicking a real-world scenario where the model forecasts future values.
+
+# COMMAND ----------
+
