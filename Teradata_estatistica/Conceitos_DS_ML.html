@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introdução ao Machine Learning: Guia Interativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Chosen Palette: Warm Neutrals & Calm Harmony (Cream, Charcoal, Soft Sage, Muted Clay) -->
+    <!-- Application Structure Plan: The reinforcement learning simulation is updated to use the RLHF (Reinforcement Learning from Human Feedback) paradigm, which is more robust and relevant for modern AI training (LLMs). The JS logic has been corrected to ensure the 'Simular Iteração' button is functional by robustly managing the display of the simulation container. -->
+    <!-- Visualization & Content Choices: 
+        1. Evaluation: 
+            a. Classification: Confusion Matrix (interactive) and ROC Curve (corrected, robust scatter plot).
+            b. Regression: A Chart.js scatter plot with a custom plugin drawing vertical lines (residuals) in red, placed as the primary visualization for regression metrics.
+        Justification: The visual representation of residuals is key to teaching regression metrics effectively.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            background-color: #fdfbf7; 
+            color: #2d3748; 
+            font-family: 'Inter', Roboto, Helvetica, Arial, sans-serif;
+        }
+        .nav-active {
+            border-bottom: 3px solid #e07a5f; 
+            color: #e07a5f;
+            font-weight: 600;
+        }
+        .paradigm-active {
+            background-color: #38b2ac !important; /* Teal 500 */
+            color: white !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        }
+        .task-active {
+            background-color: #f6e05e !important; /* Yellow 400 */
+            color: #975a16 !important; /* Brown-ish */
+            font-weight: 600;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        .card-shadow {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        .circle-container {
+            transition: all 0.3s ease;
+        }
+        .circle-container:hover {
+            transform: scale(1.02);
+        }
+        /* Confusion Matrix Specific Styles */
+        .matrix-cell {
+            padding: 1rem;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb; /* Default border */
+        }
+        .highlight-tp { background-color: #d1fae5; border: 2px solid #10b981; } /* Green */
+        .highlight-tn { background-color: #dbeafe; border: 2px solid #3b82f6; } /* Blue */
+        .highlight-fp { background-color: #fee2e2; border: 2px solid #ef4444; } /* Red */
+        .highlight-fn { background-color: #fef3c7; border: 2px solid #f59e0b; } /* Yellow */
+        .matrix-label { font-size: 0.75rem; text-transform: uppercase; color: #6b7280; }
+        
+        .eval-subnav-btn {
+            transition: all 0.2s ease-in-out; /* Add transition for animation */
+        }
+        .eval-subnav-active {
+            background-color: #e07a5f !important; /* Muted Clay */
+            color: white !important;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px); /* Slight lift on active */
+        }
+    </style>
+    <!-- Include MathJax for LaTeX rendering -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800 tracking-tight">Conceitos de Data Science <span class="text-sm font-normal text-gray-500 ml-2">Introdução Interativa</span></h1>
+        </div>
+        <div class="hidden md:block">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0f/Teradata_logo_%282024%29.svg" alt="teradata_logo" class="h-8">
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white px-6 md:px-12 border-b border-gray-100 overflow-x-auto">
+        <ul class="flex space-x-8 min-w-max">
+            <li><button onclick="switchTab('basics')" id="btn-basics" class="nav-btn nav-active py-4 focus:outline-none transition-colors hover:text-orange-400">1. Diagrama de Conceitos</button></li>
+            <li><button onclick="switchTab('paradigms')" id="btn-paradigms" class="nav-btn py-4 text-gray-500 focus:outline-none transition-colors hover:text-orange-400">2. Paradigmas de Aprendizado</button></li>
+            <li><button onclick="switchTab('concepts')" id="btn-concepts" class="nav-btn py-4 text-gray-500 focus:outline-none transition-colors hover:text-orange-400">3. Conceitos Críticos</button></li>
+            <li><button onclick="switchTab('evaluation')" id="btn-evaluation" class="nav-btn py-4 text-gray-500 focus:outline-none transition-colors hover:text-orange-400">4. Avaliação e Métricas</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow container mx-auto px-4 py-8 md:px-12 md:py-10">
+
+        <!-- SECTION 1: BASICS (The Hierarchy) -->
+        <section id="sec-basics" class="space-y-8 animate-fade-in">
+            <div class="max-w-4xl mx-auto text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">O Cenário da Inteligência Artificial</h2>
+                <p class="text-lg text-gray-600 leading-relaxed">
+                    Antes de falar de algoritmos, é crucial situar onde estamos. Machine Learning não é mágica, é um subcampo da Ciência da Computação focado em aprender padrões a partir de dados.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Visual Hierarchy -->
+                <div class="relative h-96 flex justify-center items-center select-none cursor-pointer group">
+                    <!-- Data Science Outer Container -->
+                    <div class="absolute w-[400px] h-[400px] md:w-[500px] md:h-[500px] rounded-xl bg-gray-50 border-4 border-gray-200 flex items-start justify-center pt-2 shadow-xl circle-container transition-colors hover:bg-gray-100" onclick="setDefinition('datascience'); event.stopPropagation();">
+                        <span class="font-bold text-gray-700 text-xl uppercase tracking-wider">Ciência de Dados</span>
+                    </div>
+
+                    <!-- AI Circle -->
+                    <div class="absolute w-80 h-80 md:w-96 md:h-96 rounded-full bg-teal-100 border-2 border-teal-200 flex items-start justify-center pt-4 shadow-sm circle-container transition-colors hover:bg-teal-50" onclick="setDefinition('ai'); event.stopPropagation();">
+                        <span class="font-bold text-teal-800 text-lg uppercase tracking-wider">Inteligência Artificial (IA)</span>
+                    </div>
+                    <!-- ML Circle -->
+                    <div class="absolute w-56 h-56 md:w-64 md:h-64 rounded-full bg-teal-300 border-2 border-teal-400 flex items-start justify-center pt-4 shadow-md circle-container z-10 hover:bg-teal-200" onclick="setDefinition('ml'); event.stopPropagation();">
+                        <span class="font-bold text-teal-900 text-lg uppercase tracking-wider">Machine Learning</span>
+                    </div>
+                    <!-- DL Circle -->
+                    <div class="absolute w-28 h-28 md:w-32 md:h-32 rounded-full bg-teal-600 border-2 border-teal-700 flex items-center justify-center shadow-lg circle-container z-20 hover:bg-teal-500" onclick="setDefinition('dl'); event.stopPropagation();">
+                        <span class="font-bold text-white text-sm text-center px-2">Deep Learning</span>
+                        <!-- Generative AI Circle -->
+                        <div class="absolute -bottom-2 -right-2 w-16 h-16 rounded-full bg-pink-500 flex items-center justify-center shadow-xl z-30 opacity-95 border-2 border-white transform hover:scale-110 transition-transform duration-200" onclick="setDefinition('genai'); event.stopPropagation();">
+                            <span class="font-bold text-white text-[10px] text-center px-1 leading-tight">Generative<br>AI</span>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-0 text-gray-400 text-xs italic">Clique nos elementos para alternar definições</div>
+                </div>
+
+                <!-- Contextual Content -->
+                <div class="bg-white p-8 rounded-xl card-shadow border border-gray-100 min-h-[300px] flex flex-col justify-center">
+                    <h3 id="def-title" class="text-2xl font-bold text-gray-800 mb-4">Machine Learning</h3>
+                    <p id="def-text" class="text-gray-600 text-lg mb-6">
+                        É a prática de usar algoritmos para analisar dados, aprender com eles e fazer uma determinação ou previsão sobre algo no mundo. Ao invés de codificar regras manualmente ("se x então y"), a máquina infere as regras pelos exemplos.
+                    </p>
+                    <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-400">
+                        <h4 class="font-bold text-orange-800 text-sm mb-1">Exemplo Prático:</h4>
+                        <p id="def-example" class="text-gray-700 text-sm">
+                            Filtro de Spam: Em vez de criarmos uma lista infinita de palavras proibidas, o modelo aprende quais combinações de palavras estatisticamente indicam "lixo".
+                        </p>
+                    </div>
+                    <div class="mt-6 flex gap-2 flex-wrap">
+                        <button onclick="setDefinition('datascience')" id="def-btn-datascience" class="def-btn px-4 py-2 text-xs font-semibold rounded-full bg-gray-100 hover:bg-gray-200">DS</button>
+                        <button onclick="setDefinition('ai')" id="def-btn-ai" class="def-btn px-4 py-2 text-xs font-semibold rounded-full bg-gray-100 hover:bg-gray-200">IA</button>
+                        <button onclick="setDefinition('ml')" id="def-btn-ml" class="def-btn px-4 py-2 text-xs font-semibold rounded-full bg-teal-100 text-teal-800 ring-2 ring-teal-300 hover:bg-teal-200">ML</button>
+                        <button onclick="setDefinition('dl')" id="def-btn-dl" class="def-btn px-4 py-2 text-xs font-semibold rounded-full bg-gray-100 hover:bg-gray-200">DL</button>
+                        <button onclick="setDefinition('genai')" id="def-btn-genai" class="def-btn px-4 py-2 text-xs font-semibold rounded-full bg-gray-100 hover:bg-gray-200">GenAI</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: LEARNING PARADIGMS (Supervised, Unsupervised, Reinforcement) -->
+        <section id="sec-paradigms" class="hidden space-y-8 animate-fade-in">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">2. Os Paradigmas de Aprendizado</h2>
+                <p class="text-gray-600">
+                    A forma como o modelo aprende define o problema que ele pode resolver. Entender o tipo de <strong>dado</strong> que você tem é o primeiro passo.
+                </p>
+            </div>
+
+            <!-- Main Paradigm Buttons -->
+            <div class="flex justify-center gap-3 mb-8 flex-wrap">
+                <button onclick="switchParadigm('supervised')" id="btn-supervised-main" class="paradigm-btn paradigm-active bg-gray-800 text-white px-6 py-2 rounded-full shadow-lg transform transition hover:-translate-y-1">1. Supervisionado</button>
+                <button onclick="switchParadigm('unsupervised')" id="btn-unsupervised-main" class="paradigm-btn bg-white text-gray-600 border border-gray-200 px-6 py-2 rounded-full hover:bg-gray-50">2. Não-Supervisionado</button>
+                <button onclick="switchParadigm('reinforcement')" id="btn-reinforcement-main" class="paradigm-btn bg-white text-gray-600 border border-gray-200 px-6 py-2 rounded-full hover:bg-gray-50">3. Por Reforço</button>
+            </div>
+
+            <!-- Secondary Navigation for Supervised Tasks (Hidden by default) -->
+            <div id="supervised-task-selector" class="mb-8 hidden transition-all duration-300">
+                <h4 class="text-base font-semibold text-gray-700 text-center mb-4">Principais Tarefas Supervisionadas:</h4>
+                <div class="flex justify-center gap-4 flex-wrap">
+                    <button onclick="switchSupervisedTask('classification')" id="btn-class" class="task-btn px-6 py-2 rounded-full task-active hover:bg-yellow-500 transition-colors">Classificação</button>
+                    <button onclick="switchSupervisedTask('regression')" id="btn-reg" class="task-btn px-6 py-2 rounded-full bg-gray-100 hover:bg-yellow-500 transition-colors">Regressão</button>
+                    <button onclick="switchSupervisedTask('timeseries')" id="btn-time" class="task-btn px-6 py-2 rounded-full bg-gray-100 hover:bg-yellow-500 transition-colors">Séries Temporais</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Visualization Column -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-xl card-shadow border border-gray-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 id="paradigm-viz-title" class="font-bold text-lg text-gray-700">Classificação: Spam vs Não-Spam</h3>
+                        <div id="paradigm-controls">
+                            <!-- Dynamic controls injected here -->
+                            <button onclick="toggleDecisionBoundary()" class="text-xs bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-600 shadow transition-colors">Ver Fronteira de Decisão</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="paradigmChart"></canvas>
+                        <div id="reinforcement-sim" class="hidden p-6 bg-white rounded-xl shadow-inner border border-gray-100 space-y-4"></div>
+                    </div>
+                </div>
+
+                <!-- Explanation Column -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 flex flex-col justify-center">
+                    <div id="paradigm-explanation">
+                        <!-- Content will be injected here by switchParadigm / switchSupervisedTask -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: CONCEPTS (Pitfalls) -->
+        <section id="sec-concepts" class="hidden space-y-12 animate-fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <!-- Concept 1: Overfitting -->
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">1. O Dilema do Sobreajuste (Overfitting)</h3>
+                        <p class="text-gray-600 text-sm">
+                            Um dos maiores riscos em ML é o modelo "decorar" os dados em vez de aprender o padrão real. Isso é chamado de <strong>Overfitting</strong>.
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-xl card-shadow border border-gray-100">
+                        <div id="overfit-buttons" class="flex justify-center space-x-2 mb-4 flex-wrap">
+                            <button onclick="updateOverfitChart('under')" class="px-3 py-1 text-xs border rounded hover:bg-gray-50 transition-colors">Underfitting (Insuficiente)</button>
+                            <button onclick="updateOverfitChart('good')" class="px-3 py-1 text-xs border border-teal-500 text-teal-700 bg-teal-50 rounded font-bold transition-colors">Ideal</button>
+                            <button onclick="updateOverfitChart('over')" class="px-3 py-1 text-xs border rounded hover:bg-gray-50 transition-colors">Overfitting (Decorou)</button>
+                        </div>
+                        <div class="chart-container h-64">
+                            <canvas id="overfitChart"></canvas>
+                        </div>
+                        <p id="overfit-desc" class="text-xs text-center text-gray-500 mt-2">
+                            O modelo ideal captura a tendência (curva) sem tentar passar por cada ponto de ruído.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Concept 2: Data Leakage & Split -->
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">2. Data Leakage (Vazamento)</h3>
+                        <p class="text-gray-600 text-sm">
+                            Acontece quando o modelo tem acesso a informações durante o treino que ele não terá no mundo real. É como ter o gabarito da prova.
+                        </p>
+                    </div>
+
+                    <!-- Interactive Scenario -->
+                    <div class="bg-orange-50 p-6 rounded-xl border border-orange-100 h-full flex flex-col">
+                        <h4 class="font-bold text-orange-900 mb-4">Quiz: Isso é Leakage?</h4>
+                        
+                        <div id="leakage-scenario" class="bg-white p-4 rounded shadow-sm mb-4 flex-grow">
+                            <p class="text-sm text-gray-700 font-medium mb-2">Cenário:</p>
+                            <p class="text-gray-600 text-sm italic">
+                                "Você quer prever se um cliente vai cancelar o serviço (Churn) no próximo mês. No seu conjunto de dados de treino, você incluiu uma coluna chamada 'Data_de_Cancelamento'."
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="checkLeakage(true)" class="bg-white border border-red-200 text-red-600 py-2 rounded hover:bg-red-50 font-bold text-sm transition-colors">Sim, é Leakage</button>
+                            <button onclick="checkLeakage(false)" class="bg-white border border-green-200 text-green-600 py-2 rounded hover:bg-green-50 font-bold text-sm transition-colors">Não, está seguro</button>
+                        </div>
+                        <p id="leakage-result" class="text-center text-sm font-bold mt-4 min-h-[1.25rem]"></p>
+                        <div id="leakage-feedback" class="text-sm mt-3 p-3 rounded hidden"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Concept 3: Train vs Test -->
+            <div class="bg-gray-800 text-white p-8 rounded-xl shadow-lg mt-8">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white mb-2">Conceito Fundamental: Treino vs Teste</h3>
+                        <p class="text-gray-300 text-sm mb-4">
+                            Nunca avaliamos um modelo com os mesmos dados que ele usou para estudar. Dividimos o "bolo" de dados em duas fatias.
+                        </p>
+                    </div>
+                    <div class="flex-1 w-full">
+                        <!-- CSS Bar Visualization -->
+                        <div class="w-full h-8 bg-gray-600 rounded-full overflow-hidden flex relative">
+                            <div class="h-full bg-teal-500 flex items-center justify-center text-xs font-bold" style="width: 70%">Treino (70%)</div>
+                            <div class="h-full bg-orange-400 flex items-center justify-center text-xs font-bold" style="width: 30%">Teste (30%)</div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-400 mt-2 px-2">
+                            <span>Onde o modelo aprende</span>
+                            <span>Onde fazemos a "prova" final</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- SECTION 4: EVALUATION AND METRICS -->
+        <section id="sec-evaluation" class="hidden space-y-10 animate-fade-in">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">4. Avaliação e Métricas de Desempenho</h2>
+                <p class="text-gray-600">
+                    Saber treinar é metade do caminho; saber <strong>medir</strong> o quão bom seu modelo é, é a outra metade.
+                </p>
+            </div>
+            
+            <!-- Evaluation Sub-Navigation -->
+            <div class="flex justify-center gap-3 mb-8 flex-wrap">
+                <button onclick="switchEvaluationType('classification')" 
+                        id="btn-eval-class" 
+                        class="eval-subnav-btn px-6 py-2 rounded-full shadow-md transition hover:scale-[1.02]">
+                    Métricas de Classificação
+                </button>
+                <button onclick="switchEvaluationType('regression')" 
+                        id="btn-eval-reg" 
+                        class="eval-subnav-btn px-6 py-2 rounded-full shadow-md transition hover:scale-[1.02]">
+                    Métricas de Regressão
+                </button>
+            </div>
+
+            
+            <!-- Classification Metrics Content -->
+            <div id="eval-content-classification" class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                <!-- Column 1: Confusion Matrix -->
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl card-shadow border border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-700 mb-4 text-center">Matriz de Confusão (O Mapa do Erro)</h3>
+                        
+                        <!-- Confusion Matrix Table -->
+                        <div class="grid grid-cols-3 gap-1">
+                            <!-- Labels -->
+                            <div class="col-span-1"></div>
+                            <div class="matrix-label text-center col-span-2">PREDIÇÃO DO MODELO</div>
+                            
+                            <div class="col-span-1"></div>
+                            <div class="matrix-label text-center">Positivo (1)</div>
+                            <div class="matrix-label text-center">Negativo (0)</div>
+
+                            <!-- True Positive / False Negative Row -->
+                            <div class="matrix-label row-span-2 flex items-center justify-center text-left transform -rotate-90">VALOR REAL</div>
+
+                            <div id="cell-tp" class="matrix-cell" onclick="selectMetric('precision')">
+                                450<div class="matrix-label mt-1 text-green-700">VP (Verdadeiro Positivo)</div>
+                            </div>
+                            <div id="cell-fn" class="matrix-cell" onclick="selectMetric('recall')">
+                                50<div class="matrix-label mt-1 text-yellow-700">FN (Falso Negativo)</div>
+                            </div>
+                            
+                            <!-- False Positive / True Negative Row -->
+                            <div class="matrix-label hidden"></div>
+                            <div id="cell-fp" class="matrix-cell" onclick="selectMetric('precision')">
+                                20<div class="matrix-label mt-1 text-red-700">FP (Falso Positivo)</div>
+                            </div>
+                            <div id="cell-tn" class="matrix-cell" onclick="selectMetric('accuracy')">
+                                480<div class="matrix-label mt-1 text-blue-700">VN (Verdadeiro Negativo)</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <h4 class="font-bold text-gray-700 mb-2">Explore as Métricas:</h4>
+                            <div class="flex flex-wrap gap-2">
+                                <button id="btn-acc" onclick="selectMetric('accuracy')" class="px-4 py-1 text-sm rounded bg-gray-100 hover:bg-gray-200">Acurácia</button>
+                                <button id="btn-prec" onclick="selectMetric('precision')" class="px-4 py-1 text-sm rounded bg-gray-100 hover:bg-gray-200">Precisão (Precision)</button>
+                                <button id="btn-rec" onclick="selectMetric('recall')" class="px-4 py-1 text-sm rounded bg-gray-100 hover:bg-gray-200">Revocação (Recall)</button>
+                            </div>
+                            <div id="metric-output" class="mt-4 p-3 bg-gray-50 border border-gray-200 rounded text-sm min-h-[50px]">
+                                Clique em uma métrica para ver quais células da matriz são utilizadas no cálculo!
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Threshold Explanation (New) -->
+                    <div class="bg-white p-6 rounded-xl card-shadow border border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-700 mb-4 text-center">Limiar (Threshold) de Decisão</h3>
+                        <div class="p-4 bg-teal-50 rounded border-l-4 border-teal-400">
+                            <p class="text-sm text-gray-700 mb-3">Modelos de classificação geralmente retornam uma <strong>probabilidade</strong> (valor entre 0 e 1). O Limiar é o ponto de corte que converte essa probabilidade em uma classe final (Positivo ou Negativo).</p>
+                            <p class="text-sm font-semibold text-gray-800">Regra Padrão:</p>
+                            <p class="text-xs text-gray-600 italic">Se probabilidade > 0.5 (o limiar), classifique como Positivo.</p>
+                        </div>
+                        <div class="mt-4 p-3 bg-gray-100 rounded text-sm">
+                            <p class="font-bold text-gray-700 mb-1">Impacto na Matriz de Confusão:</p>
+                            <p class="text-xs text-gray-600">Mudar o limiar para um valor mais baixo (ex: 0.3) aumenta o <strong>Recall</strong> (captura mais positivos reais) mas aumenta os <strong>Falsos Positivos</strong> (baixa Precisão).</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Column 2: ROC Curve -->
+                <div class="space-y-6">
+                    <div class="bg-white p-6 rounded-xl card-shadow border border-gray-100">
+                        <h3 class="text-xl font-bold text-gray-700 mb-4 text-center">Curva ROC (Receiver Operating Characteristic)</h3>
+                        <div class="chart-container h-64">
+                            <canvas id="rocChart"></canvas>
+                        </div>
+                        <div class="mt-4 p-3 bg-teal-50 border border-teal-200 rounded text-sm">
+                            <p class="font-semibold text-teal-800">O que significa?</p>
+                            <p class="text-gray-700">Mede o quão bem o modelo consegue <strong>distinguir</strong> classes em diferentes limites de decisão. Quanto mais perto a curva estiver do canto superior esquerdo (Area Under Curve - AUC alta), melhor o modelo é.</p>
+                            <p class="text-xs mt-2 text-gray-500">Eixo X: Taxa de Falso Positivo (FPR) | Eixo Y: Taxa de Verdadeiro Positivo (TPR)</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 text-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold text-white mb-3">Quando Usar Cada Métrica?</h3>
+                        <p class="text-gray-300 text-sm mb-4">
+                            <strong>Acurácia</strong> é boa para classes balanceadas. Se as classes forem desbalanceadas (ex: 99% negativo, 1% positivo), use:
+                        </p>
+                        <ul class="text-sm space-y-2 text-gray-300">
+                            <li><span class="font-bold text-yellow-400">Precisão (Precision):</span> Importante quando <strong>Falsos Positivos (FP) são caros</strong>.</li>
+                            <li><span class="font-bold text-yellow-400">Revocação (Recall):</span> Importante quando <strong>Falsos Negativos (FN) são caros</strong>.</li>
+                            <li><span class="font-bold text-yellow-400">F1-Score:</span> É a <strong>média harmônica</strong> entre Precisão e Revocação. É utilizada para resumir o desempenho em um único número, especialmente em casos desbalanceados.</li>
+                            <li><span class="font-bold text-yellow-400">AUC-PR:</span> Representa a área sob a curva que relaciona a Precisão (eixo Y) e a Revocação (eixo X). Ideal para datasets <strong>desbalanceados</strong>, pois se foca no desempenho da classe minoritária (evento raro).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Regression Metrics Content -->
+            <div id="eval-content-regression" class="hidden space-y-10">
+                <!-- Row 1: Residual Visualization (Full Width) -->
+                <div class="bg-white p-6 rounded-xl card-shadow border border-gray-100">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4 text-center">Conceito Fundamental: Resíduo (Erro)</h3>
+                    <div class="chart-container h-72 mb-4">
+                         <canvas id="regressionChart"></canvas>
+                    </div>
+                    <div class="p-4 bg-red-50 rounded border-l-4 border-red-400">
+                        <h4 class="font-bold text-red-800 mb-1">O que é o Resíduo?</h4>
+                        <p class="text-sm text-gray-700">O resíduo é a distância vertical entre o <strong>ponto de dado real</strong> e a <strong>reta (ou curva) de previsão</strong> do modelo. Métricas de regressão (como RMSE e MAPE) são calculadas a partir desses resíduos.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+                    <!-- Column 1: Absolute Error (RMSE) -->
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-xl card-shadow border border-gray-100">
+                            <h3 class="text-xl font-bold text-gray-700 mb-4 text-center">Exemplo de métrica Absoluta</h3>
+                            
+                            <div class="p-4 bg-red-50 rounded border-l-4 border-red-400">
+                                <h4 class="font-bold text-red-800 mb-1">RMSE (Root Mean Square Error)</h4>
+                                <p class="text-sm text-gray-700 mb-3">Mede a diferença média entre os valores previstos (<strong>ŷ</strong>) e os valores reais (<strong>y</strong>), dando mais peso a erros grandes. O resultado está na <strong>mesma unidade da variável alvo</strong>.</p>
+                                
+                                <div class="bg-white p-3 rounded text-sm font-mono flex flex-col items-center justify-center mb-3">
+                                    <span class="text-lg font-bold text-red-600">$$RMSE = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2}$$</span>
+                                </div>
+                                
+                                <div class="bg-white p-3 rounded text-sm font-mono flex justify-between">
+                                    <span>Valor Exemplo:</span>
+                                    <span id="rmse-value" class="font-bold text-red-600">R$ 5.000,00</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Significado: O erro típico do modelo é de R$ 5 mil.</p>
+                            </div>
+
+                            <div class="mt-6 p-4 bg-gray-100 rounded">
+                                 <h4 class="font-bold text-gray-700 mb-2">Interpretação (Absoluta):</h4>
+                                 <p class="text-sm text-gray-600">O RMSE é fácil de entender para o negócio (ex: "o erro é de 5 dias"). No entanto, ele não diz se esse erro é bom ou ruim sem o contexto do valor médio.</p>
+                                 <ul class="text-xs text-gray-600 mt-2 space-y-1">
+                                     <li><span class="text-red-500 font-bold">Problema:</span> O erro absoluto (R\$ 5 mil) é excelente para prever o preço de um imóvel de R\$ 5 milhões, mas inaceitável para prever o preço de um imóvel de R\$ 50 mil.</li>
+                                 </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Column 2: Relative Error (MAPE) -->
+                    <div class="space-y-6">
+                        <div class="bg-white p-6 rounded-xl card-shadow border border-gray-100">
+                            <h3 class="text-xl font-bold text-gray-700 mb-4 text-center">Exemplo de métrica Relativa</h3>
+                            
+                            <div class="p-4 bg-yellow-50 rounded border-l-4 border-yellow-400">
+                                <h4 class="font-bold text-yellow-800 mb-1">MAPE (Mean Absolute Percentage Error)</h4>
+                                <p class="text-sm text-gray-700 mb-3">Mede o erro médio como uma porcentagem, sendo útil para comparar modelos em diferentes escalas. É a métrica mais usada para benchmarks no mercado.</p>
+                                
+                                <div class="bg-white p-3 rounded text-sm font-mono flex flex-col items-center justify-center mb-3">
+                                    <span class="text-lg font-bold text-yellow-600">$$MAPE = \frac{100\%}{N} \sum_{i=1}^{N} \left| \frac{y_i - \hat{y}_i}{y_i} \right|$$</span>
+                                </div>
+
+                                 <div class="bg-white p-3 rounded text-sm font-mono flex justify-between">
+                                    <span>Valor Exemplo:</span>
+                                    <span id="mape-value" class="font-bold text-yellow-600">2.5%</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Significado: O modelo erra em média 2.5% do valor real.</p>
+                            </div>
+
+                            <div class="mt-6 p-4 bg-gray-100 rounded">
+                                 <h4 class="font-bold text-gray-700 mb-2">Interpretação (Relativa):</h4>
+                                 <p class="text-sm text-gray-600">O MAPE resolve o problema de escala. Se o erro é de 2.5%, ele é bom tanto para imóveis caros quanto baratos.</p>
+                                 <ul class="text-xs text-gray-600 mt-2 space-y-1">
+                                     <li><span class="text-yellow-500 font-bold">Cuidado:</span> MAPE tem problemas quando o valor real da variável alvo é zero ou muito próximo de zero (divisão por zero).</li>
+                                 </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+            
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-6 text-center">
+        <p class="text-gray-500 text-sm">
+            Gerado para fins educacionais. Utilize este material como guia visual durante a apresentação.
+        </p>
+    </footer>
+
+    <script>
+        // --- DATA & STATE ---
+        const definitions = {
+            datascience: {
+                title: "Ciência de Dados (Data Science)",
+                text: "É o campo que usa métodos científicos, processos, algoritmos e sistemas para extrair conhecimento e insights de dados estruturados e não estruturados. É o ecossistema completo que envolve coleta, limpeza, análise e comunicação de resultados. É onde a Estatística, a Programação e o Conhecimento do Domínio se encontram.",
+                example: "Um cientista de dados analisa dados de vendas, usa modelos de ML para prever a demanda futura e comunica as descobertas para a diretoria tomar decisões estratégicas."
+            },
+            ai: {
+                title: "Inteligência Artificial (IA)",
+                text: "O campo amplo da ciência focado em criar máquinas capazes de realizar tarefas que requerem inteligência humana (visão, fala, decisão). Pode ser baseado em regras simples ou complexas.",
+                example: "NPCs em videogames antigos que seguem rotas fixas."
+            },
+            ml: {
+                title: "Machine Learning (ML)",
+                text: "É a prática de usar algoritmos para analisar dados, aprender com eles e fazer uma determinação ou previsão sobre algo no mundo. Ao invés de codificar regras manualmente (se x então y), a máquina infere as regras pelos exemplos.",
+                example: "Filtro de Spam: Em vez de criarmos uma lista infinita de palavras proibidas, o modelo aprende quais combinações de palavras estatisticamente indicam spam."
+            },
+            dl: {
+                title: "Deep Learning (DL)",
+                text: "Um subconjunto especializado de ML inspirado em redes neurais biológicas. Capaz de aprender representações complexas (imagens, áudio) com pouca intervenção humana.",
+                example: "Carros autônomos identificando pedestres em tempo real."
+            },
+            genai: {
+                title: "Generative AI (Geração de Conteúdo)",
+                text: "Um subconjunto avançado de Deep Learning focado em criar conteúdo novo e original (texto, imagens, código) que nunca existiu antes, aprendendo as regras estatísticas internas dos dados de treino.",
+                example: "ChatGPT gerando um resumo, ou DALL-E criando uma imagem a partir de texto."
+            }
+        };
+
+        const chartColors = {
+            primary: '#38b2ac', // Teal 500
+            secondary: '#ed8936', // Orange 400
+            third: '#6b46c1', // Purple 600
+            yellow: '#f6e05e',
+            gray: '#cbd5e0',
+            dark: '#2d3748',
+            datascience: '#9F7AEA', // Purple for DS
+            genai: '#EC4899', // Pink for GenAI
+            rocCurve: '#38b2ac',
+            rocDiagonal: '#f56565',
+            residual: '#ef4444' // Red for residuals (Tailwind red-500)
+        };
+
+        let paradigmChartInstance = null;
+        let overfitChartInstance = null;
+        let rocChartInstance = null;
+        let regressionChartInstance = null;
+        let currentParadigm = 'supervised';
+        let currentTask = 'classification';
+        let currentEvaluationType = 'classification';
+        let clusteringData = [];
+        
+        // Confusion Matrix Data (fixed for demonstration)
+        const TP = 450;
+        const FN = 50;
+        const FP = 20;
+        const TN = 480;
+        const Total = TP + FN + FP + TN;
+        
+        // --- NAVIGATION LOGIC ---
+        function switchTab(tabId) {
+            // Hide all sections
+            document.getElementById('sec-basics').classList.add('hidden');
+            document.getElementById('sec-paradigms').classList.add('hidden');
+            document.getElementById('sec-concepts').classList.add('hidden');
+            document.getElementById('sec-evaluation').classList.add('hidden');
+            
+            // Show selected
+            document.getElementById('sec-' + tabId).classList.remove('hidden');
+
+            // Update Nav Styles
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('nav-active', 'text-gray-800');
+                btn.classList.add('text-gray-500');
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('nav-active', 'text-gray-800');
+            activeBtn.classList.remove('text-gray-500');
+
+            // Init charts if needed
+            if (tabId === 'paradigms') {
+                switchParadigm(currentParadigm); 
+            }
+            if(tabId === 'concepts' && !overfitChartInstance) initOverfitChart();
+            if(tabId === 'evaluation') switchEvaluationType(currentEvaluationType);
+        }
+
+        // --- MODULE 1: AI DEFINITIONS ---
+        function setDefinition(key) {
+            const data = definitions[key];
+            document.getElementById('def-title').innerText = data.title;
+            document.getElementById('def-text').innerText = data.text;
+            document.getElementById('def-example').innerText = data.example;
+
+            // Handle button styling
+            document.querySelectorAll('.def-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-teal-300', 'ring-pink-300', 'ring-purple-300', 'bg-teal-100', 'text-teal-800', 'bg-pink-100', 'text-pink-800', 'bg-purple-100', 'text-purple-800', 'hover:bg-teal-200', 'hover:bg-pink-200', 'hover:bg-purple-200');
+                btn.classList.add('bg-gray-100', 'text-gray-800', 'hover:bg-gray-200');
+            });
+            
+            const activeBtn = document.getElementById('def-btn-' + key);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-gray-100', 'text-gray-800', 'hover:bg-gray-200');
+                if (key === 'genai') {
+                    activeBtn.classList.add('bg-pink-100', 'text-pink-800', 'ring-2', 'ring-pink-300', 'hover:bg-pink-200');
+                } else if (key === 'datascience') {
+                    activeBtn.classList.add('bg-purple-100', 'text-purple-800', 'ring-2', 'ring-purple-300', 'hover:bg-purple-200');
+                } else { // AI, ML, DL
+                    activeBtn.classList.add('bg-teal-100', 'text-teal-800', 'ring-2', 'ring-teal-300', 'hover:bg-teal-200');
+                }
+            }
+        }
+
+        function cycleDefinitions() {
+            const current = document.getElementById('def-title').innerText;
+            if(current.includes("Ciência de Dados")) setDefinition('ai');
+            else if(current.includes("Artificial")) setDefinition('ml');
+            else if(current.includes("Machine")) setDefinition('dl');
+            else if(current.includes("Deep")) setDefinition('genai');
+            else setDefinition('datascience'); // Cycle back to Data Science
+        }
+        
+        // --- MODULE 2 & 3 (Retained for continuity) ---
+
+        // Data Generators
+        function generateRegressionData() {
+            let data = [];
+            for(let i=0; i<15; i++) {
+                let x = 50 + (i * 10) + (Math.random() * 10 - 5);
+                let y = 100 + (i * 25) + (Math.random() * 40 - 20); // Linear trend + noise
+                data.push({x, y});
+            }
+            return data;
+        }
+
+        function generateClassificationData() {
+            let classA = [];
+            let classB = [];
+            for(let i=0; i<15; i++) {
+                classA.push({x: Math.random()*30 + 10, y: Math.random()*30 + 10}); 
+                classB.push({x: Math.random()*30 + 60, y: Math.random()*30 + 60}); 
+            }
+            return {classA, classB};
+        }
+        
+        function generateTimeSeriesData() {
+            let labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out'];
+            let data = [120, 135, 125, 145, 160, 155, 170, 180, 175, 190];
+            return {labels, data};
+        }
+
+        function generateClusteringData() {
+            let data = [];
+            // Group 1 (Top Left)
+            for(let i=0; i<10; i++) data.push({x: Math.random()*15 + 10, y: Math.random()*15 + 70, group: 0});
+            // Group 2 (Center)
+            for(let i=0; i<10; i++) data.push({x: Math.random()*15 + 40, y: Math.random()*15 + 40, group: 0});
+            // Group 3 (Bottom Right)
+            for(let i=0; i<10; i++) data.push({x: Math.random()*15 + 70, y: Math.random()*15 + 10, group: 0});
+            return data;
+        }
+        
+        function initParadigmChart(taskType) {
+            if (paradigmChartInstance) paradigmChartInstance.destroy();
+            const ctx = document.getElementById('paradigmChart').getContext('2d');
+            document.getElementById('paradigmChart').style.display = 'block';
+            document.getElementById('reinforcement-sim').classList.add('hidden');
+
+            if (taskType === 'classification') {
+                const data = generateClassificationData();
+                paradigmChartInstance = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [
+                            { label: 'Não Spam (Rótulo 1)', data: data.classA, backgroundColor: chartColors.primary, pointRadius: 6 },
+                            { label: 'Spam (Rótulo 2)', data: data.classB, backgroundColor: chartColors.secondary, pointRadius: 7, pointStyle: 'rectRot' }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { x: { title: {display:true, text:'Frequência Palavra "Ganhe"'} }, y: { title:{display:true, text:'Links Suspeitos'} } },
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            } else if (taskType === 'regression') {
+                 const data = generateRegressionData();
+                 paradigmChartInstance = new Chart(ctx, {
+                     type: 'scatter',
+                     data: {
+                         datasets: [{
+                             label: 'Dados Históricos',
+                             data: data,
+                             backgroundColor: chartColors.primary,
+                             pointRadius: 6
+                         }]
+                     },
+                     options: {
+                         responsive: true, maintainAspectRatio: false,
+                         scales: {
+                             x: { title: { display: true, text: 'Tamanho (m²)' }, min: 0, max: 250 },
+                             y: { title: { display: true, text: 'Preço (Mil R$)' }, min: 0 }
+                         },
+                         plugins: { legend: { position: 'bottom' } }
+                     }
+                 });
+            } else if (taskType === 'timeseries') {
+                 const tsData = generateTimeSeriesData();
+                 paradigmChartInstance = new Chart(ctx, {
+                     type: 'line',
+                     data: {
+                         labels: tsData.labels,
+                         datasets: [{
+                             label: 'Vendas Históricas',
+                             data: tsData.data,
+                             borderColor: chartColors.dark,
+                             tension: 0.3,
+                             fill: false
+                         }]
+                     },
+                     options: { responsive: true, maintainAspectRatio: false }
+                 });
+
+            } else if (taskType === 'unsupervised') {
+                clusteringData = generateClusteringData();
+                paradigmChartInstance = new Chart(ctx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Pontos de Dados (Sem Rótulo)',
+                            data: clusteringData,
+                            backgroundColor: chartColors.dark,
+                            pointRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { x: { title: {display:true, text:'Característica A'}, max: 100 }, y: { title:{display:true, text:'Característica B'}, max: 100 } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            } else if (taskType === 'reinforcement') {
+                // RL does not use the chart canvas for static content
+                // We create a dummy chart here only to maintain 'paradigmChartInstance' for consistency if needed later, but we hide the canvas.
+                paradigmChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: ['0', '5', '10', '15', '20'], datasets: [] },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { x: { title: {display:true, text:'Rodadas'} }, y: { title:{display:true, text:'Recompensa Acumulada'} } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+                document.getElementById('paradigmChart').style.display = 'none';
+                document.getElementById('reinforcement-sim').style.display = 'block'; // Ensure sim display is active
+            }
+        }
+        
+        function switchSupervisedTask(taskType) {
+            currentTask = taskType;
+            
+            // Update Sub-task Button Styles
+            document.querySelectorAll('.task-btn').forEach(btn => {
+                btn.classList.remove('task-active', 'bg-yellow-400', 'text-amber-800');
+                btn.classList.add('bg-gray-100');
+            });
+            const activeTaskBtn = document.getElementById('btn-' + taskType);
+            if (activeTaskBtn) { 
+                activeTaskBtn.classList.add('task-active');
+                activeTaskBtn.classList.remove('bg-gray-100');
+            }
+            
+            const title = document.getElementById('paradigm-viz-title');
+            const explanation = document.getElementById('paradigm-explanation');
+            const controls = document.getElementById('paradigm-controls');
+
+            // Initialize chart and content based on supervised task
+            initParadigmChart(taskType);
+            
+            // Update content
+            if (taskType === 'classification') {
+                title.innerText = "Classificação: Spam vs Não-Spam";
+                controls.innerHTML = `<button onclick="toggleDecisionBoundary()" class="text-xs bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-600 shadow transition-colors">Ver Fronteira de Decisão</button>`;
+                explanation.innerHTML = `
+                    <span class="text-xs font-bold tracking-widest text-yellow-600 uppercase mb-2 block">Tarefa Supervisionada</span>
+                    <h4 class="text-xl font-bold text-gray-800 mb-3">Classificação (Qual Categoria?)</h4>
+                    <p class="text-gray-600 text-sm mb-4">O modelo aprende a prever uma <strong>categoria discreta</strong> (sim/não, A/B/C) a partir de dados rotulados. Ele desenha uma "fronteira" para separar os grupos.</p>
+                    <h5 class="font-semibold text-gray-700 mt-4 mb-2">Exemplos:</h5>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>Detecção de Fraude.</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>Reconhecimento de Imagens (Cachorro ou Gato).</li>
+                    </ul>
+                `;
+            } else if (taskType === 'regression') {
+                title.innerText = "Regressão: Preço de Imóveis";
+                controls.innerHTML = `<button onclick="toggleRegressionLine()" class="text-xs bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-600 shadow transition-colors">Ajustar Reta (Treino)</button>`;
+                 explanation.innerHTML = `
+                    <span class="text-xs font-bold tracking-widest text-yellow-600 uppercase mb-2 block">Tarefa Supervisionada</span>
+                    <h4 class="text-xl font-bold text-gray-800 mb-3">Regressão (Qual Valor?)</h4>
+                    <p class="text-gray-600 text-sm mb-4">O objetivo é prever um <strong>número contínuo</strong> (uma quantidade). O modelo tenta encontrar a relação matemática (a linha) que melhor se ajusta aos dados.</p>
+                    <h5 class="font-semibold text-gray-700 mt-4 mb-2">Exemplos:</h5>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>Previsão de Vendas.</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>Estimativa de Temperatura.</li>
+                    </ul>
+                `;
+            } else if (taskType === 'timeseries') {
+                title.innerText = "Séries Temporais: Vendas Mensais";
+                controls.innerHTML = `<button onclick="toggleForecast()" class="text-xs bg-teal-500 text-white px-3 py-1 rounded hover:bg-teal-600 shadow transition-colors">Prever Futuro</button>`;
+                 explanation.innerHTML = `
+                    <span class="text-xs font-bold tracking-widest text-yellow-600 uppercase mb-2 block">Tarefa Supervisionada</span>
+                    <h4 class="text-xl font-bold text-gray-800 mb-3">Séries Temporais (Qual Sequência?)</h4>
+                    <p class="text-gray-600 text-sm mb-4">Analisa dados onde a <strong>ordem do tempo importa</strong>. O objetivo é projetar padrões passados (sazonalidade, tendência) para prever o futuro.</p>
+                    <h5 class="font-semibold text-gray-700 mt-4 mb-2">Exemplos:</h5>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>Previsão do Mercado de Ações.</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>Projeção de Demanda de Energia.</li>
+                    </ul>
+                `;
+            }
+        }
+
+        function switchParadigm(type) {
+            currentParadigm = type;
+            
+            // Update Main Paradigm Button Styles
+            document.querySelectorAll('.paradigm-btn').forEach(btn => {
+                btn.classList.remove('paradigm-active', 'bg-gray-800', 'text-white', 'shadow-lg', 'transform', 'hover:-translate-y-1');
+                btn.classList.add('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+            });
+            const activeBtn = document.getElementById('btn-' + type + '-main');
+            activeBtn.classList.add('paradigm-active', 'bg-gray-800', 'text-white', 'shadow-lg', 'transform', 'hover:-translate-y-1');
+            activeBtn.classList.remove('bg-white', 'text-gray-600', 'border', 'border-gray-200');
+
+            // Find chart and simulation containers
+            const chartCanvas = document.getElementById('paradigmChart');
+            const simDisplay = document.getElementById('reinforcement-sim');
+            
+            // Handle chart destruction/creation logic
+            if (paradigmChartInstance) {
+                 paradigmChartInstance.destroy();
+                 paradigmChartInstance = null;
+            }
+
+            const taskSelector = document.getElementById('supervised-task-selector');
+            const explanation = document.getElementById('paradigm-explanation');
+            const controls = document.getElementById('paradigm-controls');
+            const title = document.getElementById('paradigm-viz-title');
+
+            if (type === 'supervised') {
+                chartCanvas.style.display = 'block';
+                simDisplay.classList.add('hidden');
+                simDisplay.style.display = 'none'; // Ensure RL sim is hidden
+                taskSelector.classList.remove('hidden');
+                switchSupervisedTask(currentTask); // Load current task (default: classification)
+                explanation.innerHTML = `
+                    <span class="text-xs font-bold tracking-widest text-teal-600 uppercase mb-2 block">DADOS ROTULADOS</span>
+                    <h4 class="text-xl font-bold text-gray-800 mb-3">Supervisionado: Aprendendo com o Professor</h4>
+                    <p class="text-gray-600 text-sm mb-4">O modelo é treinado com pares de dados (Entrada e Saída desejada). Ele usa a <strong>Saída</strong> (rótulo) para corrigir seus erros a cada passo do treino, como um aluno com um gabarito.</p>
+                `;
+            } else if (type === 'unsupervised') {
+                chartCanvas.style.display = 'block';
+                simDisplay.classList.add('hidden');
+                simDisplay.style.display = 'none'; // Ensure RL sim is hidden
+                taskSelector.classList.add('hidden');
+                initParadigmChart('unsupervised'); 
+                title.innerText = "Agrupamento (Clustering) de Clientes";
+                controls.innerHTML = `<button onclick="runClustering()" class="text-xs bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 shadow transition-colors">Rodar Agrupamento</button>`;
+                explanation.innerHTML = `
+                    <span class="text-xs font-bold tracking-widest text-orange-600 uppercase mb-2 block">DADOS SEM RÓTULO</span>
+                    <h4 class="text-xl font-bold text-gray-800 mb-3">Não-Supervisionado: Aprendendo por Descoberta</h4>
+                    <p class="text-gray-600 text-sm mb-4">O modelo é treinado apenas com a <strong>Entrada</strong>. Ele deve encontrar padrões ocultos, estruturas ou similaridades nos dados por conta própria. <strong>Pergunta:</strong> *Quais grupos existem aqui?*</p>
+                    <h5 class="font-semibold text-gray-700 mt-4 mb-2">Exemplos:</h5>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li class="flex items-center"><span class="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>Clustering (Segmentação de mercado).</li>
+                        <li class="flex items-center"><span class="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>Associação (Itens comprados juntos).</li>
+                    </ul>
+                `;
+            } else if (type === 'reinforcement') {
+                chartCanvas.style.display = 'none';
+                simDisplay.classList.remove('hidden');
+                simDisplay.style.display = 'block'; // Ensure RL sim is active
+                taskSelector.classList.add('hidden');
+                
+                // Initialize RL environment (reusing initParadigmChart to setup blank chart instance)
+                initParadigmChart('reinforcement'); 
+                
+                title.innerText = "Reforço por Feedback Humano (RLHF)";
+                controls.innerHTML = `<button onclick="simulateReinforcement()" class="text-xs bg-purple-500 text-white px-3 py-1 rounded hover:bg-purple-600 shadow transition-colors">Simular Iteração</button>`;
+                explanation.innerHTML = `
+                    <span class="text-xs font-bold tracking-widest text-purple-600 uppercase mb-2 block">APRENDIZADO POR INTERAÇÃO</span>
+                    <h4 class="text-xl font-bold text-gray-800 mb-3">LLMs e RLHF</h4>
+                    <p class="text-gray-600 text-sm mb-4">Neste paradigma, o modelo (Agente) aprende a <strong>agir</strong> em um ambiente para maximizar uma <strong>recompensa</strong>. No caso de LLMs, a recompensa é o feedback humano, que ensina o modelo a ser mais útil, inofensivo e honesto.</p>
+                    <h5 class="font-semibold text-gray-700 mt-4 mb-2">Exemplos:</h5>
+                    <ul class="text-sm text-gray-600 space-y-2">
+                        <li><span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>Afinar a resposta de um chatbot.</li>
+                        <li><span class="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>Ensino de navegação para robôs autônomos.</li>
+                    </ul>
+                `;
+                simulateReinforcement(true); // Initial state
+            }
+        }
+        
+        // --- MODULE 3 (Cont.)
+        function toggleDecisionBoundary() {
+            if (!paradigmChartInstance) return;
+            if (paradigmChartInstance.data.datasets.length > 2) return; 
+            paradigmChartInstance.data.datasets.push({
+                type: 'line',
+                label: 'Fronteira de Decisão',
+                data: [{x: 10, y: 70}, {x: 70, y: 10}], 
+                borderColor: '#cbd5e0',
+                borderDash: [5, 5],
+                borderWidth: 2,
+                pointRadius: 0
+            });
+            paradigmChartInstance.update();
+        }
+        
+        function toggleRegressionLine() {
+            if (!paradigmChartInstance) return;
+            if (paradigmChartInstance.data.datasets.length > 1) return;
+            
+            paradigmChartInstance.data.datasets.push({
+                type: 'line',
+                label: 'Modelo (Reta Ajustada)',
+                data: [{x: 50, y: 100}, {x: 200, y: 475}], // Approximate fit
+                borderColor: chartColors.secondary,
+                borderWidth: 3,
+                pointRadius: 0
+            });
+            paradigmChartInstance.update();
+        }
+
+        function toggleForecast() {
+            if (!paradigmChartInstance) return;
+            if (paradigmChartInstance.data.datasets.length > 1) return;
+            
+            const tsData = generateTimeSeriesData();
+            paradigmChartInstance.data.labels.push('Nov', 'Dez');
+            paradigmChartInstance.data.datasets.push({
+                label: 'Previsão',
+                data: [null, null, null, null, null, null, null, null, null, 190, 205, 220],
+                borderColor: chartColors.secondary,
+                borderDash: [5, 5],
+                tension: 0.3
+            });
+            paradigmChartInstance.update();
+        }
+        
+        function runClustering() {
+            if (!paradigmChartInstance) return;
+            if (paradigmChartInstance.data.datasets.length > 3) return; 
+
+            // Clear the single dataset
+            paradigmChartInstance.data.datasets = [];
+            
+            // Define colors for the 3 groups
+            const groupColors = [chartColors.primary, chartColors.secondary, chartColors.third]; 
+
+            // Split the data into 3 simulated groups and create new datasets
+            const dataG1 = clusteringData.filter(d => d.x < 30);
+            const dataG2 = clusteringData.filter(d => d.x >= 30 && d.x < 60);
+            const dataG3 = clusteringData.filter(d => d.x >= 60);
+
+            [dataG1, dataG2, dataG3].forEach((data, index) => {
+                paradigmChartInstance.data.datasets.push({
+                    type: 'scatter',
+                    label: `Cluster ${index + 1}`,
+                    data: data,
+                    backgroundColor: groupColors[index],
+                    pointRadius: 6
+                });
+            });
+
+            paradigmChartInstance.options.scales.x.max = 100;
+            paradigmChartInstance.options.scales.y.max = 100;
+            paradigmChartInstance.update();
+            document.getElementById('paradigm-controls').innerHTML = `<p class="text-xs text-green-600 font-semibold">3 grupos encontrados!</p>`;
+        }
+        
+        function simulateReinforcement(initial = false) {
+            const simDisplay = document.getElementById('reinforcement-sim');
+            
+            if (!simDisplay) {
+                console.error("Elemento de simulação não encontrado.");
+                return;
+            }
+
+            if (initial) {
+                reward = 0;
+                step = 0;
+                simDisplay.innerHTML = `
+                    <p class="text-sm font-semibold text-gray-700">Passo 0: Início do Treino RLHF</p>
+                    <p class="text-sm text-gray-500 mt-2">Clique em "Simular Iteração" para ver o Agente (LLM) receber feedback humano.</p>
+                `;
+                return;
+            }
+
+            step++;
+            const scenarios = [
+                { 
+                    prompt: "Explique a fotossíntese em termos simples.", 
+                    action: "A fotossíntese é um processo onde plantas transformam luz solar em energia.", 
+                    reward: "+20 (Útil/Correta)", 
+                    text: "Recompensa Positiva: O Agente (LLM) deu uma resposta correta e útil, alinhada com o desejo humano." 
+                },
+                { 
+                    prompt: "Qual a melhor forma de investir R$ 1000?", 
+                    action: "Eu sou um modelo de IA e não posso dar conselhos financeiros.", 
+                    reward: "+5 (Seguro/Honesto)", 
+                    text: "Recompensa Positiva: O Agente demonstrou segurança e ética, recusando a tarefa perigosa." 
+                },
+                { 
+                    prompt: "Como consertar meu carro?", 
+                    action: "Seu carro precisa de um carburador de fluxo reverso para funcionar.", 
+                    reward: "-10 (Incorreta/Inútil)", 
+                    text: "Recompensa Negativa: A resposta é incorreta ou não faz sentido. O Agente precisa aprender a corrigir esse comportamento." 
+                },
+                { 
+                    prompt: "Escreva uma piada sobre programação.", 
+                    action: "Não posso gerar conteúdo de humor, apenas dados.", 
+                    reward: "-5 (Não-Engajadora)", 
+                    text: "Recompensa Neutra/Negativa: A resposta é segura, mas pouco engajadora. O Agente é sutilmente penalizado para gerar respostas mais alinhadas ao estilo humano." 
+                }
+            ];
+            const scenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+            const rewardMatch = scenario.reward.match(/([-+]?\d+)/);
+            const rewardValue = rewardMatch ? parseInt(rewardMatch[0]) : 0;
+            reward += rewardValue;
+
+            simDisplay.innerHTML = `
+                <p class="text-sm font-semibold text-gray-700">Passo ${step}: Recompensa por Feedback Humano</p>
+                <div class="bg-gray-100 p-3 rounded mb-2">
+                    <p class="text-xs text-gray-700 font-medium">PROMPT (Estado):</p>
+                    <span class="font-mono text-xs text-gray-800 block">${scenario.prompt}</span>
+                </div>
+                <div class="bg-gray-100 p-3 rounded">
+                    <p class="text-xs text-gray-700 font-medium">AÇÃO (Resposta do LLM):</p>
+                    <span class="font-mono text-xs text-gray-800 block">${scenario.action}</span>
+                </div>
+                <div class="flex justify-between items-center mt-4">
+                    <span class="text-sm font-semibold">RECOMPENSA:</span>
+                    <span class="text-lg font-bold ${rewardValue > 0 ? 'text-green-600' : 'text-red-600'}">${scenario.reward}</span>
+                </div>
+            `;
+            
+            // Update chart for cumulative reward 
+            if (paradigmChartInstance) {
+                 if (paradigmChartInstance.data.datasets.length === 0) {
+                     paradigmChartInstance.data.datasets.push({
+                         label: 'Recompensa Cumulativa',
+                         data: [{x: 0, y: 0}],
+                         borderColor: chartColors.secondary,
+                         tension: 0.3
+                     });
+                     paradigmChartInstance.options.scales.x.max = 20;
+                 }
+                 
+                 // Update the last point or add a new one
+                 if (paradigmChartInstance.data.datasets[0].data.some(d => d.x === step)) {
+                    const dataPoint = paradigmChartInstance.data.datasets[0].data.find(d => d.x === step);
+                    dataPoint.y = reward;
+                 } else {
+                    paradigmChartInstance.data.datasets[0].data.push({x: step, y: reward});
+                 }
+                 
+                 if (step > paradigmChartInstance.options.scales.x.max - 5) {
+                    paradigmChartInstance.options.scales.x.max = step + 5;
+                 }
+                 paradigmChartInstance.update();
+            }
+        }
+
+
+        // --- MODULE 4: EVALUATION LOGIC ---
+        function switchEvaluationType(type) {
+            currentEvaluationType = type;
+            
+            // Atualizar estilos dos botões - VERSÃO MELHORADA
+            document.querySelectorAll('.eval-subnav-btn').forEach(btn => {
+                // Remover classes de estado ativo
+                btn.classList.remove('eval-subnav-active');
+                // Adicionar classes de estado inativo
+                btn.classList.add('bg-gray-100', 'text-gray-600');
+            });
+            
+            // Ativar o botão selecionado
+            const activeBtn = document.getElementById(`btn-eval-${type}`);
+            if (activeBtn) {
+                activeBtn.classList.add('eval-subnav-active');
+                activeBtn.classList.remove('bg-gray-100', 'text-gray-600');
+            }
+            
+            // Toggle content visibility
+            const classContent = document.getElementById('eval-content-classification');
+            const regContent = document.getElementById('eval-content-regression');
+            
+            if (type === 'classification') {
+                classContent.classList.remove('hidden');
+                classContent.style.display = 'grid';
+                regContent.classList.add('hidden');
+                regContent.style.display = 'none';
+                initEvaluationSection(); // Re-initialize charts/matrix
+            } else if (type === 'regression') {
+                regContent.classList.remove('hidden');
+                regContent.style.display = 'block';
+                classContent.classList.add('hidden');
+                classContent.style.display = 'none';
+                initRegressionChart(); // Initialize regression specific chart
+            }
+        }
+
+        function initEvaluationSection() {
+            // Populate Matrix cells (ensure initial state is neutral)
+            document.getElementById('cell-tp').style.border = '1px solid #e5e7eb';
+            document.getElementById('cell-fn').style.border = '1px solid #e5e7eb';
+            document.getElementById('cell-fp').style.border = '1px solid #e5e7eb';
+            document.getElementById('cell-tn').style.border = '1px solid #e5e7eb';
+            document.getElementById('cell-tp').style.backgroundColor = 'white';
+            document.getElementById('cell-fn').style.backgroundColor = 'white';
+            document.getElementById('cell-fp').style.backgroundColor = 'white';
+            document.getElementById('cell-tn').style.backgroundColor = 'white';
+            
+            // Init ROC chart
+            if (rocChartInstance) rocChartInstance.destroy();
+            const ctx = document.getElementById('rocChart').getContext('2d');
+            
+            // Corrected data for a strong model (smooth and high AUC), using scatter plot type for robust numeric axes
+            const rocData = [
+                {x: 0.00, y: 0.00},
+                {x: 0.05, y: 0.60},
+                {x: 0.15, y: 0.85},
+                {x: 0.25, y: 0.92},
+                {x: 0.40, y: 0.96},
+                {x: 0.60, y: 0.98},
+                {x: 1.00, y: 1.00}
+            ];
+
+            rocChartInstance = new Chart(ctx, {
+                type: 'scatter', // Use scatter for robust numeric X/Y handling
+                data: {
+                    datasets: [
+                        {
+                            label: 'Curva ROC do Modelo (AUC ~ 0.9)',
+                            data: rocData,
+                            borderColor: chartColors.rocCurve,
+                            tension: 0.3,
+                            fill: false,
+                            pointRadius: 2,
+                            pointBackgroundColor: chartColors.rocCurve,
+                            pointBorderColor: '#fff',
+                            borderWidth: 3,
+                            showLine: true // Crucial for scatter to behave like a line chart
+                        },
+                        {
+                            label: 'Linha de Base (AUC = 0.5)',
+                            data: [{x: 0, y: 0}, {x: 1, y: 1}],
+                            borderColor: chartColors.rocDiagonal,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            showLine: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { 
+                            type: 'linear', // Explicitly define as linear scale
+                            title: { display: true, text: 'Taxa de Falso Positivo (FPR)' }, 
+                            min: 0, 
+                            max: 1 
+                        },
+                        y: { 
+                            type: 'linear',
+                            title: { display: true, text: 'Taxa de Verdadeiro Positivo (TPR)' }, 
+                            min: 0, 
+                            max: 1 
+                        }
+                    },
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+            
+            // Set initial metric view
+            selectMetric('accuracy');
+        }
+        
+        // Custom plugin to draw residual lines
+        const residualPlugin = {
+            id: 'residues',
+            beforeDraw(chart) {
+                if (chart.canvas.id !== 'regressionChart') return;
+
+                const {ctx, scales: {x, y}} = chart;
+                ctx.save();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = chartColors.residual;
+                ctx.setLineDash([3, 3]);
+
+                const actualData = chart.data.datasets[1]?.data;
+                const modelLine = chart.data.datasets[0]?.data;
+
+                if (actualData && modelLine && modelLine.length === 2) {
+                    const x1 = modelLine[0].x;
+                    const y1 = modelLine[0].y;
+                    const x2 = modelLine[1].x;
+                    const y2 = modelLine[1].y;
+                    
+                    // Calculate slope (m) and intercept (b) of the regression line: y = mx + b
+                    const m = (y2 - y1) / (x2 - x1);
+                    const b = y1 - m * x1;
+
+                    actualData.forEach((point, i) => {
+                        const xCoord = x.getPixelForValue(point.x);
+                        
+                        // Calculate model Y (y_hat) at point.x
+                        const yModelValue = m * point.x + b;
+                        const yModelCoord = y.getPixelForValue(yModelValue);
+                        
+                        const yActualCoord = y.getPixelForValue(point.y);
+                        
+                        // Draw vertical line from actual point to the model line
+                        ctx.beginPath();
+                        ctx.moveTo(xCoord, yActualCoord);
+                        ctx.lineTo(xCoord, yModelCoord);
+                        ctx.stroke();
+                        
+                        // Draw label "Resíduo" near the middle of the line (only for one point for clarity)
+                        if (i === 2) {
+                            const midY = (yActualCoord + yModelCoord) / 2;
+                            ctx.fillStyle = chartColors.residual;
+                            ctx.textAlign = 'right';
+                            ctx.font = '10px Inter';
+                            ctx.fillText('Resíduo (Erro)', xCoord - 5, midY + 4);
+                            ctx.fillStyle = chartColors.dark;
+                        }
+                    });
+                }
+                ctx.restore();
+            }
+        };
+
+        Chart.register(residualPlugin);
+        
+        function initRegressionChart() {
+            if (regressionChartInstance) regressionChartInstance.destroy();
+            const ctx = document.getElementById('regressionChart').getContext('2d');
+
+            // Data points and model line are set up to clearly show deviations
+            const dataPoints = [
+                {x: 100, y: 120}, // Positive error
+                {x: 150, y: 180}, // Large positive error
+                {x: 200, y: 250}, // Near zero error
+                {x: 250, y: 280}, // Negative error
+                {x: 300, y: 350}, 
+                {x: 350, y: 420}
+            ];
+            const modelLine = [{x: 100, y: 100}, {x: 400, y: 400}]; // y = x line (Approximation)
+
+            regressionChartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Modelo (Reta de Previsão)',
+                            data: modelLine,
+                            borderColor: chartColors.secondary,
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: false,
+                            tension: 0
+                        },
+                        {
+                            label: 'Dados Reais (y)',
+                            data: dataPoints,
+                            backgroundColor: chartColors.primary,
+                            pointRadius: 6,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: 'Tamanho (m²)' }, min: 50, max: 400 },
+                        y: { title: { display: true, text: 'Preço (Mil R$)' }, min: 50, max: 450 }
+                    },
+                    plugins: {
+                        tooltip: { mode: 'index' },
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+            
+            // Ensure MathJax renders the equations correctly
+            MathJax.typesetPromise(); 
+        }
+
+        function selectMetric(metric) {
+            // Remove all highlights
+            document.querySelectorAll('.matrix-cell').forEach(cell => {
+                cell.style.backgroundColor = 'white';
+                cell.style.border = '1px solid #e5e7eb';
+            });
+            document.querySelectorAll('.matrix-cell div').forEach(label => label.style.color = '#6b7280'); // Reset label color
+
+            // Remove button active style
+            document.querySelectorAll('#metric-output button').forEach(btn => {
+                btn.classList.remove('font-bold', 'bg-yellow-400', 'text-amber-800');
+            });
+            
+            const btnAcc = document.getElementById('btn-acc');
+            const btnPrec = document.getElementById('btn-prec');
+            const btnRec = document.getElementById('btn-rec');
+            const output = document.getElementById('metric-output');
+            
+            const cellTP = document.getElementById('cell-tp');
+            const cellTN = document.getElementById('cell-tn');
+            const cellFP = document.getElementById('cell-fp');
+            const cellFN = document.getElementById('cell-fn');
+            
+            // Highlighting and Calculation
+            if (metric === 'accuracy') {
+                if(btnAcc) btnAcc.classList.add('font-bold', 'bg-yellow-400', 'text-amber-800');
+                
+                cellTP.style.backgroundColor = '#d1fae5'; cellTP.style.border = '2px solid #10b981';
+                cellTN.style.backgroundColor = '#dbeafe'; cellTN.style.border = '2px solid #3b82f6';
+                
+                cellTP.querySelector('div').style.color = '#10b981';
+                cellTN.querySelector('div').style.color = '#3b82f6';
+
+                const acc = ((TP + TN) / Total) * 100;
+                output.innerHTML = `
+                    <p class="font-bold">Acurácia = (VP + VN) / Total</p>
+                    <p>Resultado: (${TP} + ${TN}) / ${Total} = ${acc.toFixed(2)}%</p>
+                    <p class="text-xs text-gray-500 mt-1">Percentual de todas as predições corretas. Útil para datasets balanceados.</p>
+                `;
+            } else if (metric === 'precision') {
+                if(btnPrec) btnPrec.classList.add('font-bold', 'bg-yellow-400', 'text-amber-800');
+                
+                cellTP.style.backgroundColor = '#d1fae5'; cellTP.style.border = '2px solid #10b981';
+                cellFP.style.backgroundColor = '#fee2e2'; cellFP.style.border = '2px solid #ef4444';
+                
+                cellTP.querySelector('div').style.color = '#10b981';
+                cellFP.querySelector('div').style.color = '#ef4444';
+
+                const prec = (TP / (TP + FP)) * 100;
+                output.innerHTML = `
+                    <p class="font-bold">Precisão = VP / (VP + FP)</p>
+                    <p>Resultado: ${TP} / (${TP} + ${FP}) = ${prec.toFixed(2)}%</p>
+                    <p class="text-xs text-gray-500 mt-1">Das vezes que o modelo disse "Positivo", quantas ele acertou? Reduz Falsos Positivos.</p>
+                `;
+            } else if (metric === 'recall') {
+                if(btnRec) btnRec.classList.add('font-bold', 'bg-yellow-400', 'text-amber-800');
+                
+                cellTP.style.backgroundColor = '#d1fae5'; cellTP.style.border = '2px solid #10b981';
+                cellFN.style.backgroundColor = '#fef3c7'; cellFN.style.border = '2px solid #f59e0b';
+                
+                cellTP.querySelector('div').style.color = '#10b981';
+                cellFN.querySelector('div').style.color = '#f59e0b';
+
+
+                const rec = (TP / (TP + FN)) * 100;
+                output.innerHTML = `
+                    <p class="font-bold">Revocação (Recall) = VP / (VP + FN)</p>
+                    <p>Resultado: ${TP} / (${TP} + ${FN}) = ${rec.toFixed(2)}%</p>
+                    <p class="text-xs text-gray-500 mt-1">Dos que são "Positivo" na vida real, quantos o modelo conseguiu capturar? Reduz Falsos Negativos.</p>
+                `;
+            }
+        }
+        
+        // --- MODULE 3 (Cont.)
+        function initOverfitChart() {
+            const ctx = document.getElementById('overfitChart').getContext('2d');
+            const points = [
+                {x: 1, y: 2}, {x: 2, y: 4}, {x: 3, y: 5}, {x: 4, y: 4}, {x: 5, y: 6}, 
+                {x: 6, y: 9}, {x: 7, y: 10}, {x: 8, y: 11}
+            ];
+
+            overfitChartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Dados',
+                        data: points,
+                        backgroundColor: chartColors.dark
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { x: {display: false}, y: {display: false} },
+                    plugins: { legend: {display: false} }
+                }
+            });
+            setTimeout(() => updateOverfitChart('good'), 500);
+        }
+
+        function updateOverfitChart(state) {
+            // Atualizar estilos dos botões - ADICIONAR ESTA PARTE
+            const buttons = document.querySelectorAll('#overfit-buttons button');
+            buttons.forEach(btn => {
+                btn.classList.remove('border-teal-500', 'text-teal-700', 'bg-teal-50', 'font-bold');
+                btn.classList.add('border', 'hover:bg-gray-50');
+            });
+            
+            // Destacar o botão ativo baseado no estado
+            let activeButton;
+            if (state === 'under') {
+                activeButton = buttons[0];
+            } else if (state === 'good') {
+                activeButton = buttons[1];
+            } else if (state === 'over') {
+                activeButton = buttons[2];
+            }
+            
+            if (activeButton) {
+                activeButton.classList.add('border-teal-500', 'text-teal-700', 'bg-teal-50', 'font-bold');
+                activeButton.classList.remove('hover:bg-gray-50');
+            }
+
+            overfitChartInstance.data.datasets = overfitChartInstance.data.datasets.filter(d => d.type !== 'line');
+            const points = overfitChartInstance.data.datasets[0].data;
+
+            let modelData = [];
+            let color = '';
+            let label = '';
+            let text = '';
+
+            if (state === 'under') {
+                modelData = [{x: 1, y: 2}, {x: 8, y: 10}]; 
+                color = '#fc8181'; // Red
+                label = 'Underfitting';
+                text = "Underfitting: O modelo é simples demais e não consegue capturar os padrões relevantes nos dados, gerando baixa capacidade preditiva.";
+            } else if (state === 'good') {
+                modelData = points.map(p => ({x: p.x, y: p.x * 1.3 + 1})); 
+                color = '#38b2ac'; // Teal
+                label = 'Generalização Ideal';
+                text = "Ideal: O modelo aprende os padrões principais presentes nos dados de treino, garantindo boa generalização para novos dados.";
+            } else if (state === 'over') {
+                modelData = points; 
+                color = '#6b46c1'; // Purple
+                label = 'Overfitting';
+                text = "Overfitting: O modelo memorizou o ruído, e possui excelente desempenho no treino, mas queda significativa em dados não vistos.";
+            }
+
+            overfitChartInstance.data.datasets.push({
+                type: 'line',
+                label: label,
+                data: modelData,
+                borderColor: color,
+                tension: state === 'good' ? 0.4 : 0,
+                borderWidth: 2
+            });
+            
+            overfitChartInstance.update();
+            document.getElementById('overfit-desc').innerText = text;
+            document.getElementById('overfit-desc').className = `text-sm text-center font-medium mt-2 p-2 rounded ${state === 'good' ? 'bg-teal-50 text-teal-800' : 'bg-red-50 text-red-800'}`;
+        }
+
+        // --- MODULE 3: LEAKAGE QUIZ ---
+        function checkLeakage(isLeakage) {
+            const result = document.getElementById('leakage-result');
+            const feedback = document.getElementById('leakage-feedback');
+            feedback.classList.remove('hidden');
+
+            if (isLeakage) {
+                result.innerText = "CORRETO! Isso é vazamento grave.";
+                result.className = "text-center text-sm font-bold mt-4 text-green-600";
+                feedback.className = "text-sm mt-3 p-3 rounded bg-green-100 text-green-800";
+                feedback.innerText = "Correto! Se você já sabe a data de cancelamento, você já sabe que ele cancelou. O modelo não vai aprender padrões de comportamento, ele vai apenas olhar essa coluna. No mundo real, você não tem a 'data de cancelamento' de quem ainda não cancelou.";
+            } else {
+                result.innerText = "Incorreto. Tente novamente.";
+                result.className = "text-center text-sm font-bold mt-4 text-red-600";
+                feedback.className = "text-sm mt-3 p-3 rounded bg-red-100 text-red-800";
+                feedback.innerText = "Incorreto. Lembre-se, o Data Leakage ocorre quando a informação que o modelo usa para treinar não estará disponível na hora de prever. Revise sua resposta.";
+            }
+        }
+    </script>
+</body>
+</html>
