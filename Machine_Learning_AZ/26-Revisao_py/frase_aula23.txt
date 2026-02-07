@@ -1,0 +1,4 @@
+Olá
+Estou aprendendo
+a linguagem Python
+E estou gostando muito
